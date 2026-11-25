@@ -33,7 +33,7 @@ export function PublicFooter() {
               </Link>
             ))}
             <a
-              href="https://github.com/dandisetiawanco/talentos"
+              href="https://github.com/dandisetiawanco/TalentOS"
               target="_blank"
               rel="noreferrer"
               className="text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)]"
@@ -47,7 +47,7 @@ export function PublicFooter() {
           <p>
             Designed and built by{" "}
             <a
-              href="https://dandisetiawan.id"
+              href="https://www.dandisetiawan.id/"
               target="_blank"
               rel="noreferrer"
               className="font-medium text-[var(--color-text)] underline decoration-[var(--color-border-strong)] underline-offset-4 transition-colors hover:text-[var(--color-accent)]"

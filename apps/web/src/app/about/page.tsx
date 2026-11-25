@@ -22,7 +22,7 @@ export default function AboutPage() {
             <p>
               TalentOS is an independent portfolio project designed and engineered by{" "}
               <a
-                href="https://dandisetiawan.id"
+                href="https://www.dandisetiawan.id/"
                 target="_blank"
                 rel="noreferrer"
                 className="font-medium text-[var(--color-text)] underline decoration-[var(--color-border-strong)] underline-offset-4 hover:text-[var(--color-accent)]"
@@ -68,7 +68,7 @@ export default function AboutPage() {
               Try the demo
             </Link>
             <a
-              href="https://dandisetiawan.id"
+              href="https://www.dandisetiawan.id/"
               target="_blank"
               rel="noreferrer"
               className="inline-flex h-11 items-center rounded-[11px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-subtle)]"
