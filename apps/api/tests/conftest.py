@@ -21,17 +21,29 @@ from app.main import create_app
 
 @pytest.fixture()
 def test_db(tmp_path: Path) -> Generator[Session, None, None]:
-    db_file = tmp_path / "test_talentos.db"
     os.environ["LOCAL_STORAGE_PATH"] = str(tmp_path / "storage")
     get_settings.cache_clear()
-    engine = build_engine(f"sqlite:///{db_file.as_posix()}")
-    Base.metadata.create_all(bind=engine)
-    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
+
+    test_db_url = os.environ.get("TEST_DATABASE_URL")
+    if test_db_url:
+        engine = build_engine(test_db_url)
+        Base.metadata.drop_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
+    else:
+        db_file = tmp_path / "test_talentos.db"
+        engine = build_engine(f"sqlite:///{db_file.as_posix()}")
+        Base.metadata.create_all(bind=engine)
+
+    TestingSessionLocal = sessionmaker(
+        bind=engine, autoflush=False, autocommit=False, expire_on_commit=False
+    )
     session = TestingSessionLocal()
     try:
         yield session
     finally:
         session.close()
+        if test_db_url:
+            Base.metadata.drop_all(bind=engine)
         engine.dispose()
 
 

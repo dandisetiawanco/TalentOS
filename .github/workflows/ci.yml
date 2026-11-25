@@ -43,8 +43,13 @@ jobs:
           JWT_SECRET_KEY: ci-only-jwt-secret-key-at-least-32-characters-long
           SIGNED_URL_SECRET: ci-only-signed-url-secret-key-at-least-32-chars
         run: alembic upgrade head
-      - name: Run pytest suite
+      - name: Run pytest suite against PostgreSQL
         working-directory: apps/api
+        env:
+          DATABASE_URL: postgresql+psycopg://talentos:talentos_ci_password@localhost:5432/talentos_test
+          TEST_DATABASE_URL: postgresql+psycopg://talentos:talentos_ci_password@localhost:5432/talentos_test
+          JWT_SECRET_KEY: ci-only-jwt-secret-key-at-least-32-characters-long
+          SIGNED_URL_SECRET: ci-only-signed-url-secret-key-at-least-32-chars
         run: pytest -v
 
   frontend:
@@ -53,8 +58,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
