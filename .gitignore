@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+apps/api/.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Next.js and build outputs
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production
+.env.production.local
+apps/web/.env*
+!apps/web/.env.example
+apps/api/.env*
+!apps/api/.env.example
+
+# Local databases and private uploaded files
+data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+apps/api/storage/uploads/
+apps/api/storage/demo_generated/
+apps/api/storage/demo_templates/
+!apps/api/storage/.gitkeep
+
+# Testing and coverage
+coverage/
+playwright-report/
+test-results/
+.vitest/
+
+# OS and editor artifacts
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+!.vscode/extensions.json

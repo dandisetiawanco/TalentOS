@@ -1,0 +1,23 @@
+{
+  "name": "talentos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TalentOS: Intelligent Recruitment Management Platform",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @talentos/web dev",
+    "dev:api": "cd apps/api && .venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "build": "pnpm --filter @talentos/contracts build && pnpm --filter @talentos/ui build && pnpm --filter @talentos/web build",
+    "lint": "pnpm --filter @talentos/web lint",
+    "typecheck": "pnpm --filter @talentos/contracts typecheck && pnpm --filter @talentos/ui typecheck && pnpm --filter @talentos/web typecheck",
+    "test:web": "pnpm --filter @talentos/web test",
+    "test:api": "cd apps/api && .venv/bin/pytest",
+    "test": "pnpm test:api && pnpm test:web",
+    "db:migrate": "cd apps/api && .venv/bin/alembic upgrade head",
+    "db:seed": "cd apps/api && .venv/bin/python -m app.db.seed"
+  }
+}
