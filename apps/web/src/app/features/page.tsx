@@ -2,78 +2,72 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicHeader } from "@/components/public/public-header";
 import { PublicFooter } from "@/components/public/public-footer";
-import { StatusTag } from "@talentos/ui";
 
 export const metadata: Metadata = {
   title: "Features",
-  description: "Explore how TalentOS connects job publishing, candidate review, Kanban pipelines, resume evidence extraction, interviews, and recruitment analytics.",
+  description:
+    "Explore how TalentOS connects job publishing, candidate review, Kanban pipelines, resume insights, interviews, and recruitment analytics.",
 };
 
 const FEATURE_GROUPS = [
   {
-    code: "01",
-    name: "Job Architecture and Public Careers Board",
+    name: "Job openings and public careers board",
     summary:
-      "Create structured requisitions with responsibilities, required qualifications, preferred qualifications, skills, compensation bands, and closing dates. Published roles appear immediately on the public careers site.",
+      "Draft, review, and publish structured roles with required qualifications, skills, compensation ranges, and closing dates. Published roles sync directly to the public careers board.",
     bullets: [
       "Draft, published, paused, and closed role lifecycle with activity logging.",
       "Public search and filtering by department, employment type, and workplace arrangement.",
-      "Duplicate application protection scoped per job opening and candidate email.",
+      "Duplicate application protection scoped per opening and candidate email.",
     ],
   },
   {
-    code: "02",
-    name: "Candidate Management and Privacy Boundaries",
+    name: "Candidate dossiers and privacy boundaries",
     summary:
-      "Centralize applicant history, uploaded documents, verified skills, interviews, and private hiring-team notes inside organization-isolated workspaces.",
+      "Bring together applicant history, uploaded documents, verified skills, interviews, and private hiring-team notes inside organization-scoped workspaces.",
     bullets: [
-      "Full directory search, stage/job/skill filters, sorting, and server-backed pagination.",
-      "Private recruiter notes remain invisible to candidate accounts at both API and schema levels.",
-      "Candidate portal provides profile editing, application timelines, document management, and data deletion controls.",
+      "Directory search, filtering by stage, job, or skill, sorting, and server pagination.",
+      "Private recruiter notes remain invisible to candidate accounts across API and database layers.",
+      "Dedicated candidate portal with profile editing, timelines, document management, and data deletion.",
     ],
   },
   {
-    code: "03",
-    name: "Accessible Kanban Recruitment Pipeline",
+    name: "Human-led hiring pipeline",
     summary:
-      "Coordinate applicants across Applied, Screening, Shortlisted, Interview, Offer, Hired, and Rejected stages without losing accountability.",
+      "Move applicants across Applied, Screening, Shortlisted, Interview, Offer, Hired, and Rejected stages with clear accountability.",
     bullets: [
-      "Drag-and-drop via dnd-kit paired with full keyboard and button stage-movement alternatives.",
-      "Optimistic UI updates with automatic rollback if an API authorization or validation check fails.",
-      "Mandatory human confirmation and written rationale before moving a candidate to Hired or Rejected.",
+      "Pointer drag-and-drop paired with full keyboard and menu stage controls.",
+      "Optimistic UI transitions with automatic rollback if server validation fails.",
+      "Explicit human confirmation and written rationale required for Hired and Rejected transitions.",
     ],
   },
   {
-    code: "04",
-    name: "Responsible Resume Intelligence",
+    name: "Evidence-first resume insights",
     summary:
-      "Extract structured qualifications from PDF and DOCX files with verbatim evidence excerpts, prompt-injection detection, and deterministic rule-based analysis when no AI API key is configured.",
+      "Extract structured qualifications from PDF and DOCX files with verbatim document excerpts, prompt-injection checks, and built-in rule-based review when no AI key is set.",
     bullets: [
-      "Strict upload validation checking extension, MIME type, magic bytes, archive structure, and 5 MB limit.",
-      "Provider-independent interface supporting rule-based fallback, OpenAI-compatible APIs, Gemini, and local Ollama.",
-      "Never infers demographics, personality traits, employability scores, or automated hiring decisions.",
+      "Strict upload validation verifying extension, MIME type, file signature, and 5 MB limit.",
+      "Provider-independent engine supporting built-in rules alongside optional OpenAI, Gemini, or Ollama.",
+      "Never infers demographics, personality scores, or automated hiring decisions.",
     ],
   },
   {
-    code: "05",
-    name: "Interview Scheduling and Structured Feedback",
+    name: "Interview calendar and feedback",
     summary:
-      "Coordinate single or multi-interviewer rounds in month, week, and agenda views with conflict detection and rubric feedback collection.",
+      "Coordinate single or panel rounds across month, week, and agenda views with automatic conflict checks and structured rubric feedback.",
     bullets: [
-      "Automatic conflict checking prevents double-booking interviewers or candidates.",
-      "RFC 5545 ICS calendar invitation downloads for both interviewers and applicants.",
-      "Structured interview scorecards record recommendation, strengths, concerns, and rubric ratings.",
+      "Detects overlapping schedules for both interviewers and applicants before saving.",
+      "Downloadable RFC 5545 ICS calendar invitations for teams and candidates.",
+      "Structured feedback records recommendation, strengths, concerns, and rubric ratings.",
     ],
   },
   {
-    code: "06",
-    name: "Recruitment Analytics and Team Governance",
+    name: "Recruitment analytics and team roles",
     summary:
-      "Review funnel conversion, stage dwell times, time to hire, interview completion, and offer acceptance rates backed by real SQL stage history.",
+      "Inspect funnel conversion, stage dwell times, time to hire, interview completion, and offer acceptance directly from persisted stage transitions.",
     bullets: [
-      "Filter metrics by date range, department, and job opening, with one-click CSV export.",
-      "Organization Owner, Recruiter, Hiring Manager, and Candidate RBAC enforced on every endpoint.",
-      "Cmd/Ctrl + K command palette, persistent in-app notifications, and audit history logs.",
+      "Filter by date range, department, and opening, with one-click CSV export.",
+      "Organization Owner, Recruiter, Hiring Manager, and Candidate permissions enforced on every route.",
+      "Spotlight command center, in-app notifications, and audit history logs.",
     ],
   },
 ];
@@ -84,21 +78,21 @@ export default function FeaturesPage() {
       <PublicHeader />
       <main id="main-content" tabIndex={-1} className="flex-1">
         <section className="mx-auto max-w-[1160px] px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-          <p className="font-mono text-xs text-[var(--color-text-secondary)]">Platform capabilities</p>
-          <h1 className="mt-2 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--color-text)] sm:text-4xl">
-            Every workflow built to keep recruitment legible and accountable
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--color-text-secondary)]">
-            TalentOS connects public job discovery, candidate self-service, internal team review,
-            and structured reporting through one versioned REST API and normalized relational schema.
-          </p>
+          <div className="max-w-2xl">
+            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-[var(--color-text)] sm:text-4xl">
+              Every hiring workflow connected in one calm workspace.
+            </h1>
+            <p className="mt-4 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
+              TalentOS brings public job discovery, candidate self-service, internal hiring collaboration, and
+              recruitment analytics onto a single relational model.
+            </p>
+          </div>
 
           <div className="mt-10 divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
             {FEATURE_GROUPS.map((group) => (
-              <section key={group.code} className="grid gap-6 py-8 lg:grid-cols-[0.9fr_1.4fr]">
+              <section key={group.name} className="grid gap-5 py-8 lg:grid-cols-[0.85fr_1.45fr]">
                 <div>
-                  <StatusTag tone="neutral">{group.code}</StatusTag>
-                  <h2 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+                  <h2 className="text-lg font-semibold tracking-[-0.02em] text-[var(--color-text)]">
                     {group.name}
                   </h2>
                 </div>
@@ -109,7 +103,10 @@ export default function FeaturesPage() {
                   <ul className="mt-4 space-y-2 text-sm text-[var(--color-text)]">
                     {group.bullets.map((bullet) => (
                       <li key={bullet} className="flex items-start gap-2.5">
-                        <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                        <span
+                          aria-hidden="true"
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]"
+                        />
                         <span>{bullet}</span>
                       </li>
                     ))}
@@ -122,15 +119,15 @@ export default function FeaturesPage() {
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
               href="/demo"
-              className="inline-flex min-h-11 items-center rounded-[7px] bg-[var(--color-accent)] px-5 text-sm font-medium text-[var(--color-accent-ink)] hover:bg-[var(--color-accent-hover)]"
+              className="inline-flex h-11 items-center rounded-[11px] bg-[var(--color-accent)] px-5 text-sm font-medium text-[var(--color-accent-ink)] transition-colors hover:bg-[var(--color-accent-hover)]"
             >
-              Try the isolated demo
+              Try the demo
             </Link>
             <Link
               href="/careers"
-              className="inline-flex min-h-11 items-center rounded-[7px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-muted)]"
+              className="inline-flex h-11 items-center rounded-[11px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-subtle)]"
             >
-              Inspect public careers board
+              Browse open positions
             </Link>
           </div>
         </section>

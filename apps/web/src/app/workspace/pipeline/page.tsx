@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
-  PointerSensor,
   KeyboardSensor,
+  PointerSensor,
+  useDraggable,
+  useDroppable,
   useSensor,
   useSensors,
-  useDroppable,
-  useDraggable,
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
@@ -29,6 +29,16 @@ import { ApiError, apiRequest } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { formatRelativeTime } from "@/lib/format";
 
+const STAGE_DOT_STYLES: Record<ApplicationStage, string> = {
+  applied: "bg-[var(--color-text-secondary)]",
+  screening: "bg-[var(--color-info)]",
+  shortlisted: "bg-[var(--color-accent)]",
+  interview: "bg-[var(--color-accent)]",
+  offer: "bg-[var(--color-warning)]",
+  hired: "bg-[var(--color-success)]",
+  rejected: "bg-[var(--color-error)]",
+};
+
 function PipelineCard({
   app,
   canMove,
@@ -46,19 +56,24 @@ function PipelineCard({
 
   const style: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.55 : 1,
+    zIndex: isDragging ? 30 : undefined,
   };
 
   return (
     <article
       ref={setNodeRef}
       style={style}
-      className="rounded-[7px] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-xs"
+      className={`surface-solid rounded-[12px] p-3.5 transition-[box-shadow,border-color] duration-150 ${
+        isDragging
+          ? "shadow-[0_14px_32px_-12px_rgba(15,23,21,0.28)] ring-2 ring-[var(--color-accent)]"
+          : "hover:border-[var(--color-border-strong)]"
+      }`}
     >
       <div className="flex items-start justify-between gap-2">
         <Link
           href={`/workspace/candidates/${app.candidate_id}`}
-          className="text-sm font-medium text-[var(--color-text)] hover:text-[var(--color-accent)]"
+          className="text-sm font-medium text-[var(--color-text)] transition-colors hover:text-[var(--color-accent)]"
         >
           {app.candidate_name}
         </Link>
@@ -66,7 +81,7 @@ function PipelineCard({
           <button
             type="button"
             aria-label={`Drag ${app.candidate_name} to another stage`}
-            className="inline-flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] active:cursor-grabbing"
+            className="inline-flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-[7px] text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-glass-active)] hover:text-[var(--color-text)] active:cursor-grabbing"
             {...listeners}
             {...attributes}
           >
@@ -77,19 +92,18 @@ function PipelineCard({
 
       <p className="mt-0.5 text-xs text-[var(--color-text-secondary)]">{app.job_title}</p>
 
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-1 font-mono text-[11px] text-[var(--color-text-secondary)]">
-        <span>{app.candidate_years_experience}y exp</span>
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-1.5 text-[11px] tabular-nums text-[var(--color-text-secondary)]">
+        <span>{app.candidate_years_experience} yrs exp</span>
         {app.evidence_found_count != null && app.required_total_count != null && (
-          <span className="text-[var(--color-accent-text)]">
-            {app.evidence_found_count}/{app.required_total_count} evidence
+          <span className="font-medium text-[var(--color-accent-text)]">
+            {app.evidence_found_count} of {app.required_total_count} criteria
           </span>
         )}
         <span>{formatRelativeTime(app.last_activity_at)}</span>
       </div>
 
-      {/* Keyboard and single-pointer accessible stage movement alternative (WCAG 2.5.7) */}
       {canMove && (
-        <div className="mt-2.5 border-t border-[var(--color-border)] pt-2">
+        <div className="mt-3 border-t border-[var(--color-border)] pt-2.5">
           <label htmlFor={`stage-select-${app.id}`} className="sr-only">
             Move {app.candidate_name} to stage
           </label>
@@ -97,11 +111,11 @@ function PipelineCard({
             id={`stage-select-${app.id}`}
             value={app.stage}
             onChange={(e) => onSelectStage(app, e.target.value as ApplicationStage)}
-            className="min-h-8 w-full rounded-[5px] border border-[var(--color-border)] bg-[var(--color-canvas)] px-2 text-xs text-[var(--color-text)]"
+            className="min-h-8 w-full rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] px-2.5 text-xs text-[var(--color-text)] transition-colors hover:border-[var(--color-border-strong)]"
           >
             {APPLICATION_STAGES.map((st) => (
               <option key={st} value={st}>
-                Stage: {STAGE_LABELS[st]}
+                {STAGE_LABELS[st]}
               </option>
             ))}
           </select>
@@ -128,23 +142,29 @@ function PipelineColumn({
     <section
       ref={setNodeRef}
       aria-label={`${STAGE_LABELS[stage]} stage (${items.length})`}
-      className={`flex min-h-[420px] w-[268px] shrink-0 flex-col rounded-[8px] border p-3 transition-colors ${
+      className={`flex min-h-[440px] w-[274px] shrink-0 flex-col rounded-[16px] border p-3 transition-[border-color,background-color] duration-150 ${
         isOver
-          ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)]/50"
-          : "border-[var(--color-border)] bg-[var(--color-surface-muted)]/60"
+          ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)]/55"
+          : "border-[var(--color-border)] bg-[var(--color-surface-subtle)]"
       }`}
     >
-      <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-2.5">
-        <h2 className="text-xs font-semibold text-[var(--color-text)]">{STAGE_LABELS[stage]}</h2>
-        <span className="rounded-[4px] bg-[var(--color-surface)] px-1.5 py-0.5 font-mono text-xs tabular-nums text-[var(--color-text-secondary)] border border-[var(--color-border)]">
+      <div className="flex items-center justify-between px-1 pb-3">
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className={`h-2 w-2 rounded-full ${STAGE_DOT_STYLES[stage]}`}
+          />
+          <h2 className="text-xs font-semibold text-[var(--color-text)]">{STAGE_LABELS[stage]}</h2>
+        </div>
+        <span className="text-xs font-medium tabular-nums text-[var(--color-text-secondary)]">
           {items.length}
         </span>
       </div>
-      <div className="mt-2.5 flex-1 space-y-2.5">
+      <div className="flex-1 space-y-2.5">
         {items.length === 0 ? (
-          <p className="py-6 text-center text-xs text-[var(--color-text-secondary)]">
-            No candidates in {STAGE_LABELS[stage]}
-          </p>
+          <div className="flex h-24 items-center justify-center rounded-[11px] border border-dashed border-[var(--color-border)] text-xs text-[var(--color-text-secondary)]">
+            No candidates
+          </div>
         ) : (
           items.map((app) => (
             <PipelineCard key={app.id} app={app} canMove={canMove} onSelectStage={onSelectStage} />
@@ -277,25 +297,24 @@ export default function WorkspacePipelinePage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-            Recruitment pipeline
+          <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+            Hiring pipeline
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            Drag candidates across stages or use each card&apos;s stage selector for keyboard navigation.
-            Moving to Hired or Rejected requires a recorded human rationale.
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+            Drag candidates across stages or select a stage directly. Hired and Rejected moves require a human rationale.
           </p>
         </div>
         {!canMove && (
-          <StatusTag tone="neutral">Read-only view ({user?.role.replace("_", " ")})</StatusTag>
+          <StatusTag tone="neutral">Read-only access ({user?.role.replace("_", " ")})</StatusTag>
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative min-w-60 flex-1 max-w-sm">
+      <div className="surface-solid flex flex-wrap items-center gap-3 rounded-[14px] p-3">
+        <div className="relative min-w-56 flex-1 max-w-sm">
           <label htmlFor="pipe-search" className="sr-only">Search candidates in pipeline</label>
-          <Search className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-[var(--color-text-secondary)]" aria-hidden="true" />
+          <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--color-text-secondary)]" aria-hidden="true" />
           <Input
             id="pipe-search"
             type="search"
@@ -305,7 +324,7 @@ export default function WorkspacePipelinePage() {
             className="pl-9"
           />
         </div>
-        <div className="w-64">
+        <div className="w-60">
           <label htmlFor="pipe-job" className="sr-only">Filter pipeline by job</label>
           <Select id="pipe-job" value={jobId} onChange={(e) => setJobId(e.target.value)}>
             <option value="">All job openings</option>
@@ -315,19 +334,19 @@ export default function WorkspacePipelinePage() {
           </Select>
         </div>
         {boardQuery.data && (
-          <span className="font-mono text-xs text-[var(--color-text-secondary)]">
+          <span className="ml-auto text-xs font-medium tabular-nums text-[var(--color-text-secondary)]">
             {boardQuery.data.total} active applications
           </span>
         )}
       </div>
 
       {errorBanner && (
-        <div role="alert" className="rounded-[7px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-4 py-3 text-sm text-[var(--color-error)]">
+        <div role="alert" className="rounded-[12px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-4 py-3 text-sm text-[var(--color-error)]">
           {errorBanner}
         </div>
       )}
 
-      {boardQuery.isLoading && <LoadingRegion label="Loading Kanban recruitment pipeline..." rows={5} />}
+      {boardQuery.isLoading && <LoadingRegion label="Loading hiring pipeline..." rows={5} />}
 
       {boardQuery.isError && (
         <StatePanel
@@ -359,21 +378,21 @@ export default function WorkspacePipelinePage() {
         onClose={() => setPendingDecision(null)}
         title={
           pendingDecision
-            ? `Confirm move to ${STAGE_LABELS[pendingDecision.toStage]}`
+            ? `Move to ${STAGE_LABELS[pendingDecision.toStage]}`
             : "Confirm stage change"
         }
-        description="Final hiring decisions require an explicit human rationale stored in the audit log."
+        description="Final hiring decisions require a human rationale saved in the audit log."
       >
         {pendingDecision && (
           <form onSubmit={confirmSensitiveMove} className="space-y-4">
             <p className="text-sm text-[var(--color-text-secondary)]">
-              You are moving <strong className="text-[var(--color-text)]">{pendingDecision.app.candidate_name}</strong>{" "}
-              for <strong className="text-[var(--color-text)]">{pendingDecision.app.job_title}</strong> to{" "}
-              <strong>{STAGE_LABELS[pendingDecision.toStage]}</strong>.
+              Moving <strong className="text-[var(--color-text)]">{pendingDecision.app.candidate_name}</strong> for{" "}
+              <strong className="text-[var(--color-text)]">{pendingDecision.app.job_title}</strong> to{" "}
+              <strong className="text-[var(--color-text)]">{STAGE_LABELS[pendingDecision.toStage]}</strong>.
             </p>
             <div>
               <label htmlFor="decision-reason" className="block text-sm font-medium text-[var(--color-text)]">
-                Human decision rationale (required)
+                Decision rationale
               </label>
               <Textarea
                 id="decision-reason"

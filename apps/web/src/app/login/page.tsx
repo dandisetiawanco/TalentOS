@@ -96,10 +96,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-dvh flex flex-col justify-between bg-[var(--color-canvas)] px-4 py-8 sm:px-6">
+    <div className="min-h-dvh flex flex-col justify-between px-4 py-8 sm:px-6">
       <div className="mx-auto flex w-full max-w-[440px] items-center justify-between">
-        <Link href="/" aria-label="Return to TalentOS home" className="inline-flex min-h-11 items-center">
-          <BrandWordmark markSize={24} />
+        <Link href="/" aria-label="Return to TalentOS home" className="inline-flex min-h-10 items-center">
+          <BrandWordmark markSize={22} />
         </Link>
         <Link href="/register" className="text-sm font-medium text-[var(--color-accent-text)] hover:underline">
           Create account
@@ -107,7 +107,7 @@ export default function LoginPage() {
       </div>
 
       <main id="main-content" tabIndex={-1} className="mx-auto my-8 w-full max-w-[440px]">
-        <div className="rounded-[10px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6 sm:p-8">
+        <div className="surface-solid rounded-[20px] p-6 sm:p-8 shadow-[0_16px_44px_-24px_rgba(15,23,21,0.16)]">
           <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
             Sign in to TalentOS
           </h1>
@@ -118,7 +118,7 @@ export default function LoginPage() {
           {serverError && (
             <div
               role="alert"
-              className="mt-5 rounded-[7px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-3.5 py-2.5 text-sm text-[var(--color-error)]"
+              className="mt-5 rounded-[10px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-3.5 py-2.5 text-sm text-[var(--color-error)]"
             >
               {serverError}
             </div>
@@ -181,7 +181,7 @@ export default function LoginPage() {
 
           <div className="mt-6 border-t border-[var(--color-border)] pt-5">
             <p className="text-xs font-medium text-[var(--color-text-secondary)]">
-              Or launch an isolated demo session immediately
+              Or try an isolated demo session
             </p>
             <div className="mt-3 grid grid-cols-2 gap-2.5">
               <Button
@@ -202,7 +202,7 @@ export default function LoginPage() {
               </Button>
             </div>
             <p className="mt-3 text-xs text-[var(--color-text-secondary)]">
-              Need hiring manager access?{" "}
+              Looking for hiring manager access?{" "}
               <Link href="/demo" className="font-medium text-[var(--color-accent-text)] hover:underline">
                 View all three demo roles
               </Link>
@@ -225,7 +225,7 @@ export default function LoginPage() {
         description="Enter your account email to request a password reset token."
       >
         {resetStatus && (
-          <div className="mb-4 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-3 text-xs text-[var(--color-text)]">
+          <div className="mb-4 rounded-[10px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3 text-xs text-[var(--color-text)]">
             {resetStatus}
           </div>
         )}

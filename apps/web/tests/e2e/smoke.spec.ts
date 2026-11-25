@@ -8,7 +8,7 @@ test.describe("TalentOS critical end-to-end flows", () => {
     });
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Hiring, with greater clarity." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "A better way to hire." })).toBeVisible();
     await page.getByRole("tab", { name: "Candidate profile" }).click();
     await expect(page.getByText("Required qualifications evidence check")).toBeVisible();
 
@@ -22,19 +22,19 @@ test.describe("TalentOS critical end-to-end flows", () => {
     await page.goto("/demo");
     await page.getByRole("button", { name: /Launch recruiter workspace/i }).click();
     await page.waitForURL("**/workspace");
-    await expect(page.getByRole("heading", { name: "Recruitment overview" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
 
     await page.getByRole("link", { name: "Jobs" }).first().click();
     await expect(page.getByRole("heading", { name: "Job openings" })).toBeVisible();
 
     await page.getByRole("link", { name: "Pipeline" }).first().click();
-    await expect(page.getByRole("heading", { name: "Recruitment pipeline" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Hiring pipeline" })).toBeVisible();
 
     await page.getByRole("link", { name: "Interviews" }).first().click();
-    await expect(page.getByRole("heading", { name: "Interview coordination" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Interviews" })).toBeVisible();
 
     await page.getByRole("link", { name: "Analytics" }).first().click();
-    await expect(page.getByRole("heading", { name: "Recruitment analytics" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Analytics" })).toBeVisible();
   });
 
   test("candidate demo portal isolates applicant experience from recruiter views", async ({ page }) => {
@@ -42,7 +42,6 @@ test.describe("TalentOS critical end-to-end flows", () => {
     await page.getByRole("button", { name: /Launch candidate portal/i }).click();
     await page.waitForURL("**/candidate");
     await expect(page.getByText("Your applications")).toBeVisible();
-    // Attempt to visit recruiter route should redirect back to /candidate
     await page.goto("/workspace");
     await page.waitForURL("**/candidate");
   });

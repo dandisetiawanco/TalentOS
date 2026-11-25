@@ -1,44 +1,62 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" fill="none">
-  <rect width="1200" height="630" fill="#F7F8FA"/>
-  <rect x="48" y="48" width="1104" height="534" rx="12" fill="#FFFFFF" stroke="#E2E7E3" stroke-width="2"/>
-  <line x1="48" y1="136" x2="1152" y2="136" stroke="#E2E7E3" stroke-width="1.5"/>
-  <g transform="translate(88, 76)">
-    <rect x="0" y="2" width="28" height="6" rx="1.5" fill="#17211D"/>
-    <rect x="7" y="12" width="12" height="6" rx="1.5" fill="#17211D"/>
-    <rect x="11" y="18" width="6" height="10" rx="1.5" fill="#17211D"/>
-    <rect x="22" y="12" width="6" height="6" rx="1.5" fill="#176B4D"/>
-    <text x="42" y="23" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="24" font-weight="600" letter-spacing="-0.03em">Talent<tspan fill="#176B4D">OS</tspan></text>
+  <defs>
+    <radialGradient id="ogGlow" cx="50%" cy="0%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#F2F4F6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#F2F4F6"/>
+  <rect width="1200" height="630" fill="url(#ogGlow)"/>
+
+  <!-- Main Liquid Glass inspired frame -->
+  <rect x="44" y="42" width="1112" height="546" rx="22" fill="#FFFFFF" fill-opacity="0.88" stroke="#18201E" stroke-opacity="0.09" stroke-width="1.5"/>
+  <line x1="44" y1="118" x2="1156" y2="118" stroke="#18201E" stroke-opacity="0.08"/>
+
+  <!-- Brand -->
+  <g transform="translate(84, 67)">
+    <rect x="0" y="2" width="26" height="5.5" rx="1.4" fill="#18201E"/>
+    <rect x="7" y="12" width="10.5" height="5.5" rx="1.4" fill="#18201E"/>
+    <rect x="10.5" y="17.5" width="5.5" height="9" rx="1.4" fill="#18201E"/>
+    <rect x="20.5" y="12" width="5.5" height="5.5" rx="1.4" fill="#247A60"/>
+    <text x="40" y="22" fill="#18201E" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="600" letter-spacing="-0.03em">Talent<tspan fill="#247A60">OS</tspan></text>
   </g>
-  <text x="1112" y="100" text-anchor="end" fill="#647067" font-family="Geist Mono, monospace" font-size="14">RECRUITMENT OPERATING SYSTEM</text>
-  <text x="88" y="256" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="60" font-weight="600" letter-spacing="-0.035em">Better hiring.</text>
-  <text x="88" y="324" fill="#176B4D" font-family="Geist, Inter, sans-serif" font-size="60" font-weight="600" letter-spacing="-0.035em">Built on intelligence.</text>
-  <text x="88" y="388" fill="#647067" font-family="Geist, Inter, sans-serif" font-size="22">Human-led hiring workflows, evidence-based resume review,</text>
-  <text x="88" y="420" fill="#647067" font-family="Geist, Inter, sans-serif" font-size="22">interview coordination, and recruitment analytics in one workspace.</text>
-  <g transform="translate(760, 186)">
-    <rect width="348" height="328" rx="8" fill="#F7F8FA" stroke="#E2E7E3" stroke-width="1.5"/>
-    <text x="20" y="32" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="14" font-weight="600">Pipeline Overview</text>
-    <text x="328" y="32" text-anchor="end" fill="#647067" font-family="Geist Mono, monospace" font-size="12">7 STAGES</text>
-    <line x1="20" y1="46" x2="328" y2="46" stroke="#E2E7E3"/>
-    <rect x="20" y="64" width="308" height="44" rx="6" fill="#FFFFFF" stroke="#E2E7E3"/>
-    <text x="34" y="84" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Staff Frontend Engineer</text>
-    <text x="34" y="100" fill="#647067" font-family="Geist Mono, monospace" font-size="11">Evidence review complete</text>
-    <rect x="256" y="75" width="58" height="22" rx="4" fill="#E7F2EC"/>
-    <text x="285" y="90" text-anchor="middle" fill="#176B4D" font-family="Geist Mono, monospace" font-size="11" font-weight="600">INTERVIEW</text>
-    <rect x="20" y="120" width="308" height="44" rx="6" fill="#FFFFFF" stroke="#E2E7E3"/>
-    <text x="34" y="140" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Senior Backend Engineer</text>
-    <text x="34" y="156" fill="#647067" font-family="Geist Mono, monospace" font-size="11">4/5 criteria verified</text>
-    <rect x="256" y="131" width="58" height="22" rx="4" fill="#F0F2F5"/>
-    <text x="285" y="146" text-anchor="middle" fill="#17211D" font-family="Geist Mono, monospace" font-size="11" font-weight="600">SHORTLIST</text>
-    <rect x="20" y="176" width="308" height="44" rx="6" fill="#FFFFFF" stroke="#E2E7E3"/>
-    <text x="34" y="196" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Product Designer</text>
-    <text x="34" y="212" fill="#647067" font-family="Geist Mono, monospace" font-size="11">Panel interview scheduled</text>
-    <rect x="256" y="187" width="58" height="22" rx="4" fill="#E7F2EC"/>
-    <text x="285" y="202" text-anchor="middle" fill="#176B4D" font-family="Geist Mono, monospace" font-size="11" font-weight="600">OFFER</text>
-    <rect x="20" y="242" width="308" height="64" rx="6" fill="#17211D"/>
-    <text x="34" y="268" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Human-led decision boundary</text>
-    <text x="34" y="289" fill="#A0ADA4" font-family="Geist, Inter, sans-serif" font-size="11.5">AI surfaces evidence. People make every hiring call.</text>
+  <text x="1116" y="88" text-anchor="end" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="500">Recruitment workspace</text>
+
+  <!-- Left copy -->
+  <text x="84" y="246" fill="#18201E" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="56" font-weight="600" letter-spacing="-0.038em">A better way</text>
+  <text x="84" y="312" fill="#247A60" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="56" font-weight="600" letter-spacing="-0.038em">to hire.</text>
+  <text x="84" y="374" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="20">Bring your hiring team, candidates,</text>
+  <text x="84" y="404" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="20">and recruitment workflows together</text>
+  <text x="84" y="434" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="20">in one thoughtful workspace.</text>
+
+  <!-- Right workspace preview card -->
+  <g transform="translate(720, 162)">
+    <rect width="396" height="330" rx="16" fill="#F7F9FA" stroke="#18201E" stroke-opacity="0.09" stroke-width="1.2"/>
+    <text x="22" y="34" fill="#18201E" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">Hiring pipeline</text>
+    <text x="374" y="34" text-anchor="end" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="12">7 stages</text>
+    <line x1="22" y1="48" x2="374" y2="48" stroke="#18201E" stroke-opacity="0.08"/>
+
+    <rect x="22" y="64" width="352" height="58" rx="11" fill="#FFFFFF" stroke="#18201E" stroke-opacity="0.08"/>
+    <circle cx="40" cy="85" r="4" fill="#247A60"/>
+    <text x="52" y="89" fill="#18201E" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13.5" font-weight="600">Nadia Kusuma</text>
+    <text x="40" y="109" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Staff Frontend Engineer · Interview</text>
+
+    <rect x="22" y="134" width="352" height="58" rx="11" fill="#FFFFFF" stroke="#18201E" stroke-opacity="0.08"/>
+    <circle cx="40" cy="155" r="4" fill="#2D5D8C"/>
+    <text x="52" y="159" fill="#18201E" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13.5" font-weight="600">Raka Pratama</text>
+    <text x="40" y="179" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Senior Backend Engineer · Shortlisted</text>
+
+    <rect x="22" y="204" width="352" height="58" rx="11" fill="#FFFFFF" stroke="#18201E" stroke-opacity="0.08"/>
+    <circle cx="40" cy="225" r="4" fill="#9A3C07"/>
+    <text x="52" y="229" fill="#18201E" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13.5" font-weight="600">Siti Rahmawati</text>
+    <text x="40" y="249" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Product Designer · Offer extended</text>
+
+    <rect x="22" y="274" width="352" height="38" rx="10" fill="#E7F4EE"/>
+    <text x="198" y="297" text-anchor="middle" fill="#1D6650" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="11.5" font-weight="500">Evidence-first review · Human-led hiring decisions</text>
   </g>
-  <line x1="88" y1="518" x2="1112" y2="518" stroke="#E2E7E3"/>
-  <text x="88" y="554" fill="#647067" font-family="Geist, Inter, sans-serif" font-size="15">Designed and developed by Dandi Setiawan</text>
-  <text x="1112" y="554" text-anchor="end" fill="#176B4D" font-family="Geist Mono, monospace" font-size="15">dandisetiawan.id</text>
+
+  <line x1="84" y1="528" x2="1116" y2="528" stroke="#18201E" stroke-opacity="0.08"/>
+  <text x="84" y="562" fill="#626D68" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="14.5">Designed and built by Dandi Setiawan</text>
+  <text x="1116" y="562" text-anchor="end" fill="#247A60" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="14.5" font-weight="500">dandisetiawan.id</text>
 </svg>

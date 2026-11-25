@@ -1,33 +1,72 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" fill="none">
-  <rect width="1280" height="640" fill="#101412"/>
-  <rect x="40" y="40" width="1200" height="560" rx="12" fill="#171D19" stroke="#2D3830" stroke-width="2"/>
-  <line x1="40" y1="128" x2="1240" y2="128" stroke="#2D3830" stroke-width="1.5"/>
-  <g transform="translate(88, 68)">
-    <rect x="0" y="2" width="30" height="6" rx="1.5" fill="#F0F4F1"/>
-    <rect x="8" y="13" width="12" height="6" rx="1.5" fill="#F0F4F1"/>
-    <rect x="12" y="19" width="6" height="10" rx="1.5" fill="#F0F4F1"/>
-    <rect x="24" y="13" width="6" height="6" rx="1.5" fill="#65C49A"/>
-    <text x="46" y="24" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="25" font-weight="600" letter-spacing="-0.03em">Talent<tspan fill="#65C49A">OS</tspan></text>
+  <defs>
+    <radialGradient id="topGlow" cx="50%" cy="0%" r="72%">
+      <stop offset="0%" stop-color="#70C9A6" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#111416" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="glassCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#22292D" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#1B2023" stop-opacity="0.96"/>
+    </linearGradient>
+    <linearGradient id="glassRail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#252D31" stop-opacity="0.88"/>
+      <stop offset="100%" stop-color="#1A1F22" stop-opacity="0.94"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="#111416"/>
+  <rect width="1280" height="640" fill="url(#topGlow)"/>
+
+  <!-- Floating macOS-inspired outer window -->
+  <rect x="44" y="40" width="1192" height="560" rx="22" fill="url(#glassCard)" stroke="#FFFFFF" stroke-opacity="0.11" stroke-width="1.5"/>
+
+  <!-- Top window bar -->
+  <line x1="44" y1="114" x2="1236" y2="114" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="1"/>
+  <g transform="translate(82, 65)">
+    <rect x="0" y="2" width="26" height="5.5" rx="1.4" fill="#F2F5F4"/>
+    <rect x="7" y="12" width="10.5" height="5.5" rx="1.4" fill="#F2F5F4"/>
+    <rect x="10.5" y="17.5" width="5.5" height="9" rx="1.4" fill="#F2F5F4"/>
+    <rect x="20.5" y="12" width="5.5" height="5.5" rx="1.4" fill="#70C9A6"/>
+    <text x="40" y="22" fill="#F2F5F4" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="600" letter-spacing="-0.03em">Talent<tspan fill="#70C9A6">OS</tspan></text>
   </g>
-  <text x="1192" y="92" text-anchor="end" fill="#A0ADA4" font-family="Geist Mono, monospace" font-size="14">NEXT.JS / FASTAPI / POSTGRESQL / RESPONSIBLE AI</text>
-  <text x="88" y="252" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="62" font-weight="600" letter-spacing="-0.035em">Hiring, with greater clarity.</text>
-  <text x="88" y="314" fill="#A0ADA4" font-family="Geist, Inter, sans-serif" font-size="23">An intelligent recruitment operating system for structured hiring workflows,</text>
-  <text x="88" y="346" fill="#A0ADA4" font-family="Geist, Inter, sans-serif" font-size="23">evidence-based resume analysis, role-based access, and analytics.</text>
-  <g transform="translate(88, 404)">
-    <rect x="0" y="0" width="256" height="92" rx="8" fill="#202722" stroke="#2D3830"/>
-    <text x="20" y="34" fill="#65C49A" font-family="Geist Mono, monospace" font-size="12">01 / WORKFLOW</text>
-    <text x="20" y="64" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="17" font-weight="500">Kanban Hiring Pipeline</text>
-    <rect x="280" y="0" width="256" height="92" rx="8" fill="#202722" stroke="#2D3830"/>
-    <text x="300" y="34" fill="#65C49A" font-family="Geist Mono, monospace" font-size="12">02 / EVIDENCE</text>
-    <text x="300" y="64" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="17" font-weight="500">Responsible AI Review</text>
-    <rect x="560" y="0" width="256" height="92" rx="8" fill="#202722" stroke="#2D3830"/>
-    <text x="580" y="34" fill="#65C49A" font-family="Geist Mono, monospace" font-size="12">03 / ACCESS</text>
-    <text x="580" y="64" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="17" font-weight="500">Org-Isolated RBAC</text>
-    <rect x="840" y="0" width="264" height="92" rx="8" fill="#202722" stroke="#2D3830"/>
-    <text x="860" y="34" fill="#65C49A" font-family="Geist Mono, monospace" font-size="12">04 / PORTAL</text>
-    <text x="860" y="64" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="17" font-weight="500">Candidate Experience</text>
+  <rect x="944" y="61" width="256" height="32" rx="9" fill="#111416" fill-opacity="0.55" stroke="#FFFFFF" stroke-opacity="0.1"/>
+  <text x="962" y="81" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">Spotlight workspace</text>
+  <text x="1182" y="81" text-anchor="end" fill="#A5AFAB" font-family="Geist Mono, monospace" font-size="12">⌘K</text>
+
+  <!-- Left editorial headline -->
+  <text x="82" y="232" fill="#F2F5F4" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="60" font-weight="600" letter-spacing="-0.038em">A better way to hire.</text>
+  <text x="82" y="290" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="21">Bring your hiring team, candidates, and recruitment</text>
+  <text x="82" y="320" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="21">workflows together in one thoughtful workspace.</text>
+
+  <!-- Feature summary row (clean, no artificial numbering or slashes) -->
+  <g transform="translate(82, 378)">
+    <rect x="0" y="0" width="260" height="106" rx="14" fill="url(#glassRail)" stroke="#FFFFFF" stroke-opacity="0.09"/>
+    <circle cx="24" cy="30" r="4.5" fill="#70C9A6"/>
+    <text x="38" y="35" fill="#F2F5F4" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Hiring pipeline</text>
+    <text x="20" y="64" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">Seven stages with human</text>
+    <text x="20" y="84" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">approval and audit history</text>
+
+    <rect x="284" y="0" width="260" height="106" rx="14" fill="url(#glassRail)" stroke="#FFFFFF" stroke-opacity="0.09"/>
+    <circle cx="308" cy="30" r="4.5" fill="#84B6E8"/>
+    <text x="322" y="35" fill="#F2F5F4" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Resume insights</text>
+    <text x="304" y="64" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">Verbatim document evidence</text>
+    <text x="304" y="84" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">with built-in rule fallback</text>
+
+    <rect x="568" y="0" width="260" height="106" rx="14" fill="url(#glassRail)" stroke="#FFFFFF" stroke-opacity="0.09"/>
+    <circle cx="592" cy="30" r="4.5" fill="#FDB022"/>
+    <text x="606" y="35" fill="#F2F5F4" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Interview calendar</text>
+    <text x="588" y="64" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">Conflict checks, rubrics,</text>
+    <text x="588" y="84" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">and downloadable ICS invites</text>
+
+    <rect x="852" y="0" width="264" height="106" rx="14" fill="url(#glassRail)" stroke="#FFFFFF" stroke-opacity="0.09"/>
+    <circle cx="876" cy="30" r="4.5" fill="#70C9A6"/>
+    <text x="890" y="35" fill="#F2F5F4" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Candidate portal</text>
+    <text x="872" y="64" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">Dedicated applicant tracking</text>
+    <text x="872" y="84" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="13">and private document vault</text>
   </g>
-  <line x1="88" y1="538" x2="1192" y2="538" stroke="#2D3830"/>
-  <text x="88" y="574" fill="#A0ADA4" font-family="Geist, Inter, sans-serif" font-size="15">Portfolio showcase designed and developed by Dandi Setiawan</text>
-  <text x="1192" y="574" text-anchor="end" fill="#65C49A" font-family="Geist Mono, monospace" font-size="15">dandisetiawan.id</text>
+
+  <!-- Footer attribution -->
+  <line x1="82" y1="534" x2="1198" y2="534" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="82" y="570" fill="#A5AFAB" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="14.5">Independent full-stack portfolio project designed and developed by Dandi Setiawan</text>
+  <text x="1198" y="570" text-anchor="end" fill="#70C9A6" font-family="Geist, -apple-system, BlinkMacSystemFont, sans-serif" font-size="14.5" font-weight="500">dandisetiawan.id</text>
 </svg>

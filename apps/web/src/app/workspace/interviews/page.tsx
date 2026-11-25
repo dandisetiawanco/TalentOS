@@ -3,7 +3,17 @@
 import * as React from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Calendar, CheckCircle2, Download, MessageSquarePlus, Plus, XCircle } from "lucide-react";
+import { motion } from "motion/react";
+import {
+  Calendar,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  MessageSquarePlus,
+  Plus,
+  XCircle,
+} from "lucide-react";
 import {
   INTERVIEW_TYPE_LABELS,
   type ApplicationSummary,
@@ -17,12 +27,46 @@ import { formatDateTime } from "@/lib/format";
 
 type CalendarView = "agenda" | "week" | "month";
 
+function toLocalDateKey(input: Date | string): string {
+  const d = typeof input === "string" ? new Date(input) : input;
+  if (Number.isNaN(d.getTime())) return "";
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function formatLocalTime(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(d);
+}
+
+function interviewTypeAccent(type: string): string {
+  switch (type) {
+    case "technical":
+      return "border-l-[var(--color-accent)] bg-[var(--color-accent-soft)]/70";
+    case "panel":
+      return "border-l-[var(--color-warning)] bg-[var(--color-warning-soft)]/80";
+    case "final":
+      return "border-l-[var(--color-success)] bg-[var(--color-accent-soft)]";
+    default:
+      return "border-l-[var(--color-info)] bg-[var(--color-info-soft)]/80";
+  }
+}
+
 export default function WorkspaceInterviewsPage() {
   const queryClient = useQueryClient();
   const { user, announce } = useAuth();
   const [view, setView] = React.useState<CalendarView>("agenda");
   const [statusFilter, setStatusFilter] = React.useState("");
+  const [anchorDate, setAnchorDate] = React.useState<Date>(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
   const [scheduleOpen, setScheduleOpen] = React.useState(false);
+  const [selectedEvent, setSelectedEvent] = React.useState<InterviewRecord | null>(null);
   const [feedbackTarget, setFeedbackTarget] = React.useState<InterviewRecord | null>(null);
   const [formError, setFormError] = React.useState<string | null>(null);
 
@@ -33,7 +77,8 @@ export default function WorkspaceInterviewsPage() {
   const [startDateTime, setStartDateTime] = React.useState(() => {
     const d = new Date(Date.now() + 2 * 86400_000);
     d.setMinutes(0, 0, 0);
-    return d.toISOString().slice(0, 16);
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60_000);
+    return local.toISOString().slice(0, 16);
   });
   const [duration, setDuration] = React.useState("45");
   const [timezone, setTimezone] = React.useState("Asia/Jakarta");
@@ -107,6 +152,7 @@ export default function WorkspaceInterviewsPage() {
         body: JSON.stringify({ status: nextStatus }),
       }),
     onSuccess: (updated) => {
+      setSelectedEvent(null);
       announce(`Marked interview as ${updated.status}.`);
       void queryClient.invalidateQueries({ queryKey: ["workspace-interviews"] });
     },
@@ -136,38 +182,94 @@ export default function WorkspaceInterviewsPage() {
 
   const canSchedule = user?.role === "organization_owner" || user?.role === "recruiter";
   const interviews = React.useMemo(() => interviewsQuery.data || [], [interviewsQuery.data]);
+  const todayKey = toLocalDateKey(new Date());
 
-  // Build 7-day week grid starting today
+  // Group interviews by local calendar date key (consistent with Agenda view!)
+  const interviewsByLocalDate = React.useMemo(() => {
+    const map = new Map<string, InterviewRecord[]>();
+    for (const iv of interviews) {
+      const key = toLocalDateKey(iv.scheduled_start);
+      if (!key) continue;
+      const list = map.get(key) || [];
+      list.push(iv);
+      map.set(key, list);
+    }
+    return map;
+  }, [interviews]);
+
+  const navigateRange = (direction: -1 | 1) => {
+    setAnchorDate((prev) => {
+      const next = new Date(prev);
+      if (view === "month") {
+        next.setMonth(next.getMonth() + direction, 1);
+      } else {
+        next.setDate(next.getDate() + direction * 7);
+      }
+      return next;
+    });
+  };
+
+  const resetToday = () => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    setAnchorDate(d);
+  };
+
+  // Build 7-day week window starting from anchorDate
   const weekDays = React.useMemo(() => {
-    const start = new Date();
+    const start = new Date(anchorDate);
     start.setHours(0, 0, 0, 0);
     return Array.from({ length: 7 }).map((_, idx) => {
-      const d = new Date(start.getTime() + idx * 86400_000);
-      const key = d.toISOString().slice(0, 10);
+      const d = new Date(start);
+      d.setDate(start.getDate() + idx);
+      const key = toLocalDateKey(d);
       return {
         key,
-        label: new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric" }).format(d),
-        items: interviews.filter((iv) => iv.scheduled_start.slice(0, 10) === key),
+        isToday: key === todayKey,
+        weekday: new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(d),
+        dayNum: d.getDate(),
+        monthShort: new Intl.DateTimeFormat("en-US", { month: "short" }).format(d),
+        items: interviewsByLocalDate.get(key) || [],
       };
     });
-  }, [interviews]);
+  }, [anchorDate, interviewsByLocalDate, todayKey]);
 
-  // Build current month day cells
-  const monthDays = React.useMemo(() => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
+  const weekRangeLabel = React.useMemo(() => {
+    const first = new Date(anchorDate);
+    const last = new Date(anchorDate);
+    last.setDate(first.getDate() + 6);
+    const fmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+    return `${fmt.format(first)} to ${fmt.format(last)}, ${last.getFullYear()}`;
+  }, [anchorDate]);
+
+  // Build calendar month grid with Sunday-Saturday alignment
+  const monthGrid = React.useMemo(() => {
+    const year = anchorDate.getFullYear();
+    const month = anchorDate.getMonth();
+    const firstDayOfWeek = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    return Array.from({ length: daysInMonth }).map((_, idx) => {
-      const d = new Date(Date.UTC(year, month, idx + 1));
-      const key = d.toISOString().slice(0, 10);
+    const leadingBlanks = Array.from({ length: firstDayOfWeek }).map((_, idx) => ({
+      blank: true as const,
+      key: `blank-${idx}`,
+    }));
+    const cells = Array.from({ length: daysInMonth }).map((_, idx) => {
+      const d = new Date(year, month, idx + 1);
+      const key = toLocalDateKey(d);
       return {
+        blank: false as const,
         dayNum: idx + 1,
         key,
-        items: interviews.filter((iv) => iv.scheduled_start.slice(0, 10) === key),
+        isToday: key === todayKey,
+        items: interviewsByLocalDate.get(key) || [],
       };
     });
-  }, [interviews]);
+    return [...leadingBlanks, ...cells];
+  }, [anchorDate, interviewsByLocalDate, todayKey]);
+
+  const monthLabel = React.useMemo(
+    () => new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(anchorDate),
+    [anchorDate]
+  );
 
   const toggleInterviewer = (userId: string) => {
     setSelectedInterviewers((prev) =>
@@ -177,49 +279,97 @@ export default function WorkspaceInterviewsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="max-w-2xl">
-          <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-            Interview coordination
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+            Interviews
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            Schedule panels with automatic conflict detection, record structured feedback, and export
-            ICS calendar invitations (no external calendar OAuth sync required).
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+            Coordinate panels with conflict checks, collect structured feedback, and download ICS invites.
           </p>
         </div>
         {canSchedule && (
-          <Button variant="primary" className="shrink-0" onClick={() => setScheduleOpen(true)}>
+          <Button variant="primary" size="sm" className="shrink-0" onClick={() => setScheduleOpen(true)}>
             <Plus className="h-4 w-4" aria-hidden="true" />
             Schedule interview
           </Button>
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div role="tablist" aria-label="Calendar layout mode" className="inline-flex rounded-[7px] border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
-          {(["agenda", "week", "month"] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              role="tab"
-              aria-selected={view === mode}
-              onClick={() => setView(mode)}
-              className={`min-h-9 rounded-[5px] px-3 text-xs font-medium capitalize transition-colors ${
-                view === mode
-                  ? "bg-[var(--color-accent)] text-[var(--color-accent-ink)]"
-                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-              }`}
-            >
-              {mode}
-            </button>
-          ))}
+      {/* Unified native desktop calendar control bar */}
+      <div className="surface-solid flex flex-wrap items-center justify-between gap-3 rounded-[14px] p-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div
+            role="tablist"
+            aria-label="Calendar view mode"
+            className="surface-segment-track inline-flex rounded-[10px] p-0.5"
+          >
+            {(["agenda", "week", "month"] as const).map((mode) => {
+              const selected = view === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setView(mode)}
+                  className={`relative min-h-8 rounded-[8px] px-3 text-xs font-medium capitalize transition-colors ${
+                    selected
+                      ? "text-[var(--color-text)]"
+                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+                  }`}
+                >
+                  {selected && (
+                    <motion.span
+                      layoutId="calendar-view-pill"
+                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-[8px] bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(15,23,21,0.08)] ring-1 ring-[var(--color-border)]"
+                    />
+                  )}
+                  <span className="relative z-10">{mode}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {view !== "agenda" && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => navigateRange(-1)}
+                aria-label={view === "month" ? "Previous month" : "Previous week"}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--color-border)] text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-surface-subtle)] hover:text-[var(--color-text)]"
+              >
+                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={resetToday}
+                className="inline-flex h-8 items-center rounded-[8px] border border-[var(--color-border)] px-2.5 text-xs font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-subtle)]"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                onClick={() => navigateRange(1)}
+                aria-label={view === "month" ? "Next month" : "Next week"}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--color-border)] text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-surface-subtle)] hover:text-[var(--color-text)]"
+              >
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <span className="ml-1 text-xs font-semibold text-[var(--color-text)]">
+                {view === "month" ? monthLabel : weekRangeLabel}
+              </span>
+            </div>
+          )}
         </div>
 
         <Select
           aria-label="Filter interviews by status"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="min-h-10 w-44 text-xs"
+          className="min-h-9 w-40 text-xs"
         >
           <option value="">All statuses</option>
           <option value="scheduled">Scheduled</option>
@@ -253,12 +403,14 @@ export default function WorkspaceInterviewsPage() {
           {interviews.map((iv) => (
             <article
               key={iv.id}
-              className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+              className="surface-solid rounded-[16px] p-5"
             >
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-base font-semibold text-[var(--color-text)]">{iv.title}</h2>
+                    <h2 className="text-base font-semibold tracking-[-0.01em] text-[var(--color-text)]">
+                      {iv.title}
+                    </h2>
                     <StatusTag
                       tone={
                         iv.status === "completed"
@@ -270,23 +422,25 @@ export default function WorkspaceInterviewsPage() {
                     >
                       {iv.status}
                     </StatusTag>
-                    <StatusTag tone="neutral">
+                    <span className="text-xs text-[var(--color-text-secondary)]">
                       {INTERVIEW_TYPE_LABELS[iv.interview_type] || iv.interview_type}
-                    </StatusTag>
+                    </span>
                   </div>
                   <p className="text-sm text-[var(--color-text-secondary)]">
-                    Candidate:{" "}
-                    <Link href={`/workspace/candidates/${iv.candidate_id}`} className="font-medium text-[var(--color-text)] hover:text-[var(--color-accent)]">
+                    <Link
+                      href={`/workspace/candidates/${iv.candidate_id}`}
+                      className="font-medium text-[var(--color-text)] hover:text-[var(--color-accent)]"
+                    >
                       {iv.candidate_name}
                     </Link>{" "}
                     · {iv.job_title}
                   </p>
-                  <p className="inline-flex items-center gap-1.5 font-mono text-xs text-[var(--color-text-secondary)]">
+                  <p className="inline-flex items-center gap-1.5 text-xs tabular-nums text-[var(--color-text-secondary)]">
                     <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                     {formatDateTime(iv.scheduled_start)} · {iv.duration_minutes} min ({iv.timezone})
                   </p>
                   <p className="text-xs text-[var(--color-text-secondary)]">
-                    Interviewers: {iv.participants.map((p) => p.full_name).join(", ") || "None assigned"}
+                    Panel: {iv.participants.map((p) => p.full_name).join(", ") || "Unassigned"}
                   </p>
                 </div>
 
@@ -302,7 +456,7 @@ export default function WorkspaceInterviewsPage() {
                     }
                   >
                     <Download className="h-3.5 w-3.5" aria-hidden="true" />
-                    Download ICS
+                    ICS invite
                   </Button>
                   <Button variant="secondary" size="sm" onClick={() => setFeedbackTarget(iv)}>
                     <MessageSquarePlus className="h-3.5 w-3.5" aria-hidden="true" />
@@ -332,23 +486,30 @@ export default function WorkspaceInterviewsPage() {
               </div>
 
               {iv.feedback_entries.length > 0 && (
-                <div className="mt-4 border-t border-[var(--color-border)] pt-3">
+                <div className="mt-4 border-t border-[var(--color-border)] pt-3.5">
                   <p className="text-xs font-semibold text-[var(--color-text)]">Recorded feedback</p>
-                  <div className="mt-2 grid gap-2.5 sm:grid-cols-2">
+                  <div
+                    className={`mt-2.5 grid gap-2.5 ${
+                      iv.feedback_entries.length > 1 ? "sm:grid-cols-2" : "grid-cols-1"
+                    }`}
+                  >
                     {iv.feedback_entries.map((fb) => (
-                      <div key={fb.id} className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-3 text-xs">
-                        <div className="flex items-center justify-between">
+                      <div
+                        key={fb.id}
+                        className="rounded-[11px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3.5 text-xs"
+                      >
+                        <div className="flex items-center justify-between gap-2">
                           <span className="font-medium text-[var(--color-text)]">{fb.reviewer_name}</span>
                           <StatusTag tone={fb.recommendation === "no" ? "error" : "success"}>
                             {fb.recommendation.replace("_", " ")}
                           </StatusTag>
                         </div>
-                        <p className="mt-1.5 text-[var(--color-text-secondary)]">
-                          <strong className="text-[var(--color-text)]">Strengths:</strong> {fb.strengths}
+                        <p className="mt-2 leading-relaxed text-[var(--color-text-secondary)]">
+                          <strong className="font-medium text-[var(--color-text)]">Strengths:</strong> {fb.strengths}
                         </p>
                         {fb.concerns && (
-                          <p className="mt-1 text-[var(--color-text-secondary)]">
-                            <strong className="text-[var(--color-text)]">Concerns:</strong> {fb.concerns}
+                          <p className="mt-1 leading-relaxed text-[var(--color-text-secondary)]">
+                            <strong className="font-medium text-[var(--color-text)]">Concerns:</strong> {fb.concerns}
                           </p>
                         )}
                       </div>
@@ -361,24 +522,40 @@ export default function WorkspaceInterviewsPage() {
         </div>
       )}
 
-      {/* Week view */}
+      {/* Week view (local timezone aligned with Agenda) */}
       {view === "week" && (
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-7">
+        <div className="surface-solid grid divide-y divide-[var(--color-border)] overflow-hidden rounded-[16px] md:grid-cols-2 md:divide-y-0 lg:grid-cols-7 lg:divide-x">
           {weekDays.map((day) => (
-            <div key={day.key} className="min-h-48 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
-              <p className="border-b border-[var(--color-border)] pb-2 font-mono text-xs font-medium text-[var(--color-text)]">
-                {day.label}
-              </p>
-              <div className="mt-2 space-y-2">
+            <div key={day.key} className="flex min-h-[210px] flex-col p-3">
+              <div className="flex items-center justify-between pb-2.5 border-b border-[var(--color-border)]">
+                <span className="text-xs font-medium text-[var(--color-text-secondary)]">{day.weekday}</span>
+                <span
+                  className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs font-semibold tabular-nums ${
+                    day.isToday
+                      ? "bg-[var(--color-accent)] text-[var(--color-accent-ink)]"
+                      : "text-[var(--color-text)]"
+                  }`}
+                >
+                  {day.dayNum}
+                </span>
+              </div>
+              <div className="mt-2.5 flex-1 space-y-2">
                 {day.items.length === 0 ? (
-                  <p className="text-xs text-[var(--color-text-secondary)]">Open</p>
+                  <p className="py-4 text-center text-[11px] text-[var(--color-text-secondary)]">Open</p>
                 ) : (
                   day.items.map((iv) => (
-                    <div key={iv.id} className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-accent-soft)] p-2 text-xs">
-                      <p className="font-medium text-[var(--color-accent-text)]">{iv.candidate_name}</p>
-                      <p className="text-[var(--color-text-secondary)]">{iv.title}</p>
-                      <p className="mt-0.5 font-mono text-[11px]">{iv.scheduled_start.slice(11, 16)} UTC</p>
-                    </div>
+                    <button
+                      key={iv.id}
+                      type="button"
+                      onClick={() => setSelectedEvent(iv)}
+                      className={`w-full rounded-[9px] border border-[var(--color-border)] border-l-[3px] p-2.5 text-left text-xs transition-opacity hover:opacity-90 ${interviewTypeAccent(iv.interview_type)}`}
+                    >
+                      <p className="truncate font-semibold text-[var(--color-text)]">{iv.candidate_name}</p>
+                      <p className="mt-0.5 truncate text-[11px] text-[var(--color-text-secondary)]">{iv.title}</p>
+                      <p className="mt-1 text-[11px] font-medium tabular-nums text-[var(--color-text)]">
+                        {formatLocalTime(iv.scheduled_start)} · {iv.duration_minutes}m
+                      </p>
+                    </button>
                   ))
                 )}
               </div>
@@ -387,27 +564,126 @@ export default function WorkspaceInterviewsPage() {
         </div>
       )}
 
-      {/* Month view */}
+      {/* Month view (proper Sun-Sat alignment, local dates) */}
       {view === "month" && (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
-          {monthDays.map((cell) => (
-            <div key={cell.key} className="min-h-24 rounded-[7px] border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5">
-              <span className="font-mono text-xs text-[var(--color-text-secondary)]">{cell.dayNum}</span>
-              <div className="mt-1.5 space-y-1">
-                {cell.items.map((iv) => (
-                  <p
-                    key={iv.id}
-                    className="truncate rounded bg-[var(--color-accent-soft)] px-1.5 py-0.5 text-[11px] font-medium text-[var(--color-accent-text)]"
-                    title={`${iv.candidate_name}: ${iv.title}`}
-                  >
-                    {iv.candidate_name}
-                  </p>
-                ))}
+        <div className="surface-solid overflow-hidden rounded-[16px]">
+          <div className="hidden grid-cols-7 border-b border-[var(--color-border)] bg-[var(--color-surface-subtle)] lg:grid">
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+              <div key={d} className="px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)]">
+                {d}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
+            {monthGrid.map((cell) =>
+              cell.blank ? (
+                <div
+                  key={cell.key}
+                  aria-hidden="true"
+                  className="hidden min-h-24 border-b border-r border-[var(--color-border)] bg-[var(--color-surface-subtle)]/40 lg:block"
+                />
+              ) : (
+                <div
+                  key={cell.key}
+                  className="min-h-24 border-b border-r border-[var(--color-border)] p-2.5"
+                >
+                  <span
+                    className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs font-medium tabular-nums ${
+                      cell.isToday
+                        ? "bg-[var(--color-accent)] text-[var(--color-accent-ink)]"
+                        : "text-[var(--color-text-secondary)]"
+                    }`}
+                  >
+                    {cell.dayNum}
+                  </span>
+                  <div className="mt-1.5 space-y-1">
+                    {cell.items.map((iv) => (
+                      <button
+                        key={iv.id}
+                        type="button"
+                        onClick={() => setSelectedEvent(iv)}
+                        className={`block w-full truncate rounded-[6px] border-l-2 px-1.5 py-1 text-left text-[11px] font-medium text-[var(--color-text)] transition-opacity hover:opacity-85 ${interviewTypeAccent(iv.interview_type)}`}
+                        title={`${iv.candidate_name}: ${iv.title} (${formatLocalTime(iv.scheduled_start)})`}
+                      >
+                        {formatLocalTime(iv.scheduled_start)} {iv.candidate_name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            )}
+          </div>
         </div>
       )}
+
+      {/* Contextual Interview Details Dialog (for Week & Month click) */}
+      <NativeDialog
+        open={Boolean(selectedEvent)}
+        onClose={() => setSelectedEvent(null)}
+        title={selectedEvent?.title || "Interview details"}
+        description={selectedEvent ? `${selectedEvent.candidate_name} · ${selectedEvent.job_title}` : undefined}
+      >
+        {selectedEvent && (
+          <div className="space-y-4 text-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusTag tone={selectedEvent.status === "completed" ? "success" : selectedEvent.status === "cancelled" ? "error" : "accent"}>
+                {selectedEvent.status}
+              </StatusTag>
+              <span className="text-xs text-[var(--color-text-secondary)]">
+                {INTERVIEW_TYPE_LABELS[selectedEvent.interview_type] || selectedEvent.interview_type}
+              </span>
+            </div>
+            <dl className="space-y-2 rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-4 text-xs">
+              <div className="flex justify-between gap-2">
+                <dt className="text-[var(--color-text-secondary)]">Time</dt>
+                <dd className="font-medium tabular-nums text-[var(--color-text)]">
+                  {formatDateTime(selectedEvent.scheduled_start)} ({selectedEvent.duration_minutes} min)
+                </dd>
+              </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-[var(--color-text-secondary)]">Interviewers</dt>
+                <dd className="text-right font-medium text-[var(--color-text)]">
+                  {selectedEvent.participants.map((p) => p.full_name).join(", ") || "Unassigned"}
+                </dd>
+              </div>
+            </dl>
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+              <Link
+                href={`/workspace/candidates/${selectedEvent.candidate_id}`}
+                className="text-xs font-medium text-[var(--color-accent-text)] hover:underline"
+              >
+                Open candidate dossier
+              </Link>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() =>
+                    void downloadAuthenticatedBlob(
+                      `/interviews/${selectedEvent.id}/ics`,
+                      `talentos-interview-${selectedEvent.id.slice(0, 8)}.ics`
+                    )
+                  }
+                >
+                  <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                  ICS
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    const target = selectedEvent;
+                    setSelectedEvent(null);
+                    setFeedbackTarget(target);
+                  }}
+                >
+                  Feedback
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </NativeDialog>
 
       {/* Schedule interview dialog */}
       <NativeDialog
@@ -417,7 +693,7 @@ export default function WorkspaceInterviewsPage() {
         description="Conflict detection automatically checks interviewer and candidate availability."
       >
         {formError && (
-          <div role="alert" className="mb-4 rounded-[6px] border border-[var(--color-error)] bg-[var(--color-error-soft)] p-3 text-xs text-[var(--color-error)]">
+          <div role="alert" className="mb-4 rounded-[10px] border border-[var(--color-error)] bg-[var(--color-error-soft)] p-3 text-xs text-[var(--color-error)]">
             {formError}
           </div>
         )}
@@ -475,7 +751,7 @@ export default function WorkspaceInterviewsPage() {
           </div>
           <fieldset>
             <legend className="text-xs font-medium text-[var(--color-text)]">Assign interviewers</legend>
-            <div className="mt-1.5 space-y-1.5 rounded-[7px] border border-[var(--color-border)] p-2.5">
+            <div className="mt-1.5 space-y-1.5 rounded-[10px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3">
               {(teamQuery.data || []).map((member) => (
                 <label key={member.user_id} className="flex items-center gap-2 text-xs text-[var(--color-text)]">
                   <input
@@ -536,7 +812,7 @@ export default function WorkspaceInterviewsPage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label htmlFor="fb-tech" className="block text-xs font-medium text-[var(--color-text)]">
-                Technical / role depth (1 to 5): {techScore}
+                Technical and role depth (1 to 5): {techScore}
               </label>
               <input id="fb-tech" type="range" min={1} max={5} value={techScore} onChange={(e) => setTechScore(Number(e.target.value))} className="mt-2 w-full" />
             </div>

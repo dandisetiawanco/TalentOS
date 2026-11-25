@@ -16,12 +16,12 @@ export default function CandidateApplicationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-            My applications
+          <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+            Applications
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
             Follow each role&apos;s stage progression and scheduled interviews in one place.
           </p>
         </div>
@@ -53,13 +53,13 @@ export default function CandidateApplicationsPage() {
           {data.map((app) => (
             <article
               key={app.id}
-              className="flex flex-col gap-4 rounded-[9px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:flex-row sm:items-center sm:justify-between"
+              className="surface-solid flex flex-col gap-4 rounded-[16px] p-5 sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <Link
                     href={`/candidate/applications/${app.id}`}
-                    className="text-base font-semibold text-[var(--color-text)] hover:text-[var(--color-accent)]"
+                    className="text-base font-semibold text-[var(--color-text)] transition-colors hover:text-[var(--color-accent)]"
                   >
                     {app.job_title}
                   </Link>
@@ -68,8 +68,9 @@ export default function CandidateApplicationsPage() {
                 <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
                   {app.organization_name} · {app.job_department} · {app.job_location}
                 </p>
-                <p className="mt-1 font-mono text-xs text-[var(--color-text-secondary)]">
-                  Applied {formatShortDate(app.applied_at)} · {app.interviews.length} interview(s)
+                <p className="mt-1 text-xs tabular-nums text-[var(--color-text-secondary)]">
+                  Applied {formatShortDate(app.applied_at)} · {app.interviews.length}{" "}
+                  {app.interviews.length === 1 ? "interview" : "interviews"}
                 </p>
               </div>
               <Link href={`/candidate/applications/${app.id}`}>

@@ -128,10 +128,10 @@ export default function PublicJobDetailPage() {
         <div className="mx-auto max-w-[1160px] px-4 py-10 sm:px-6 lg:px-8">
           <Link
             href="/careers"
-            className="inline-flex min-h-11 items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+            className="inline-flex min-h-10 items-center gap-1.5 text-sm text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)]"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            <span>Back to open positions</span>
+            <span>Open positions</span>
           </Link>
 
           {isLoading && <LoadingRegion label="Loading role specification..." rows={6} />}
@@ -150,14 +150,14 @@ export default function PublicJobDetailPage() {
           )}
 
           {job && (
-            <div className="mt-4 grid gap-10 lg:grid-cols-[1.35fr_0.95fr]">
+            <div className="mt-5 grid gap-10 lg:grid-cols-[1.35fr_0.95fr]">
               <article>
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusTag tone="neutral">{job.department}</StatusTag>
                   <StatusTag tone="accent">
                     {WORK_ARRANGEMENT_LABELS[job.work_arrangement] || job.work_arrangement}
                   </StatusTag>
-                  {job.is_demo && <StatusTag tone="warning">Demonstration listing</StatusTag>}
+                  {job.is_demo && <StatusTag tone="warning">Demo listing</StatusTag>}
                 </div>
 
                 <h1 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-[var(--color-text)]">
@@ -173,22 +173,22 @@ export default function PublicJobDetailPage() {
                   <span>{EMPLOYMENT_TYPE_LABELS[job.employment_type] || job.employment_type}</span>
                 </div>
 
-                <dl className="mt-6 grid grid-cols-2 gap-4 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:grid-cols-3">
+                <dl className="surface-solid mt-6 grid grid-cols-2 gap-4 rounded-[14px] p-4 sm:grid-cols-3">
                   <div>
                     <dt className="text-xs text-[var(--color-text-secondary)]">Compensation range</dt>
-                    <dd className="mt-1 font-mono text-sm font-medium text-[var(--color-text)]">
+                    <dd className="mt-1 text-sm font-medium tabular-nums text-[var(--color-text)]">
                       {formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency)}
                     </dd>
                   </div>
                   <div>
                     <dt className="text-xs text-[var(--color-text-secondary)]">Open seats</dt>
-                    <dd className="mt-1 font-mono text-sm font-medium text-[var(--color-text)]">
+                    <dd className="mt-1 text-sm font-medium tabular-nums text-[var(--color-text)]">
                       {job.openings_count}
                     </dd>
                   </div>
                   <div>
                     <dt className="text-xs text-[var(--color-text-secondary)]">Closing date</dt>
-                    <dd className="mt-1 font-mono text-sm font-medium text-[var(--color-text)]">
+                    <dd className="mt-1 text-sm font-medium tabular-nums text-[var(--color-text)]">
                       {formatShortDate(job.application_deadline)}
                     </dd>
                   </div>
@@ -206,7 +206,10 @@ export default function PublicJobDetailPage() {
                       <ul className="mt-2.5 space-y-2">
                         {job.responsibilities.map((item) => (
                           <li key={item} className="flex items-start gap-2.5">
-                            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]" />
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-accent)]"
+                            />
                             <span>{item}</span>
                           </li>
                         ))}
@@ -220,7 +223,10 @@ export default function PublicJobDetailPage() {
                       <ul className="mt-2.5 space-y-2">
                         {job.required_qualifications.map((item) => (
                           <li key={item} className="flex items-start gap-2.5">
-                            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-text)]" />
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-text)]"
+                            />
                             <span>{item}</span>
                           </li>
                         ))}
@@ -234,7 +240,10 @@ export default function PublicJobDetailPage() {
                       <ul className="mt-2.5 space-y-2">
                         {job.preferred_qualifications.map((item) => (
                           <li key={item} className="flex items-start gap-2.5">
-                            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-text-secondary)]" />
+                            <span
+                              aria-hidden="true"
+                              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-text-secondary)]"
+                            />
                             <span>{item}</span>
                           </li>
                         ))}
@@ -249,7 +258,7 @@ export default function PublicJobDetailPage() {
                         {job.required_skills.map((skill) => (
                           <span
                             key={skill}
-                            className="rounded-[5px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 font-mono text-xs text-[var(--color-text)]"
+                            className="rounded-[7px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-xs font-medium text-[var(--color-text)]"
                           >
                             {skill}
                           </span>
@@ -261,21 +270,19 @@ export default function PublicJobDetailPage() {
               </article>
 
               <aside className="lg:sticky lg:top-24 lg:self-start">
-                <div className="rounded-[10px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6">
+                <div className="surface-solid rounded-[18px] p-6">
                   {confirmation ? (
                     <div role="status" className="space-y-4">
-                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-[7px] bg-[var(--color-accent-soft)] text-[var(--color-success)]">
+                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-[11px] bg-[var(--color-accent-soft)] text-[var(--color-success)]">
                         <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
                       </div>
-                      <h2 className="text-lg font-semibold text-[var(--color-text)]">
-                        Application received
-                      </h2>
+                      <h2 className="text-lg font-semibold text-[var(--color-text)]">Application received</h2>
                       <p className="text-sm text-[var(--color-text-secondary)]">
                         Your application for <strong className="text-[var(--color-text)]">{confirmation.job_title}</strong> at{" "}
                         {confirmation.organization_name} has been recorded.
                       </p>
                       <p className="font-mono text-xs text-[var(--color-text-secondary)]">
-                        Reference ID: {confirmation.application_id.slice(0, 8)}
+                        Reference {confirmation.application_id.slice(0, 8)}
                       </p>
                       <div className="flex flex-wrap gap-2 pt-2">
                         {user?.account_type === "candidate" ? (
@@ -296,13 +303,13 @@ export default function PublicJobDetailPage() {
                     <>
                       <h2 className="text-lg font-semibold text-[var(--color-text)]">Apply for this role</h2>
                       <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
-                        Duplicate applications with the same email for this opening are prevented automatically.
+                        Duplicate applications with the same email for this role are prevented automatically.
                       </p>
 
                       {formError && (
                         <div
                           role="alert"
-                          className="mt-4 rounded-[6px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-3 py-2.5 text-xs text-[var(--color-error)]"
+                          className="mt-4 rounded-[10px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-3.5 py-2.5 text-xs text-[var(--color-error)]"
                         >
                           {formError}
                         </div>
@@ -408,7 +415,7 @@ export default function PublicJobDetailPage() {
                           />
                         </div>
 
-                        <label className="flex items-start gap-2.5 rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-3 text-xs text-[var(--color-text-secondary)]">
+                        <label className="flex items-start gap-2.5 rounded-[11px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3 text-xs text-[var(--color-text-secondary)]">
                           <input
                             type="checkbox"
                             checked={consent}
@@ -416,19 +423,19 @@ export default function PublicJobDetailPage() {
                             className="mt-0.5 h-4 w-4 rounded"
                           />
                           <span>
-                            I consent to processing my application and any uploaded resume for
-                            evidence-based qualification review. Hiring decisions remain human-led.
+                            I consent to processing my application and any uploaded resume for evidence-based
+                            qualification review. Hiring decisions remain human-led.
                           </span>
                         </label>
 
                         {user?.account_type === "candidate" && (
-                          <div className="rounded-[7px] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-canvas)] p-3">
+                          <div className="rounded-[11px] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface-subtle)] p-3">
                             <label htmlFor="app-resume" className="flex items-center justify-between text-xs font-medium text-[var(--color-text)]">
                               <span className="inline-flex items-center gap-1.5">
                                 <Upload className="h-3.5 w-3.5" aria-hidden="true" />
                                 Attach resume (PDF or DOCX, max 5 MB)
                               </span>
-                              {uploading && <span className="font-mono text-[11px]">Uploading...</span>}
+                              {uploading && <span className="text-[11px] text-[var(--color-text-secondary)]">Uploading...</span>}
                             </label>
                             <input
                               id="app-resume"
@@ -438,7 +445,7 @@ export default function PublicJobDetailPage() {
                               className="mt-2 block w-full text-xs text-[var(--color-text-secondary)]"
                             />
                             {uploadedName && (
-                              <p className="mt-2 inline-flex items-center gap-1.5 font-mono text-xs text-[var(--color-success)]">
+                              <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-success)]">
                                 <FileText className="h-3.5 w-3.5" aria-hidden="true" />
                                 Attached: {uploadedName}
                               </p>

@@ -51,10 +51,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-dvh flex flex-col justify-between bg-[var(--color-canvas)] px-4 py-8 sm:px-6">
+    <div className="min-h-dvh flex flex-col justify-between px-4 py-8 sm:px-6">
       <div className="mx-auto flex w-full max-w-[480px] items-center justify-between">
-        <Link href="/" aria-label="Return to TalentOS home" className="inline-flex min-h-11 items-center">
-          <BrandWordmark markSize={24} />
+        <Link href="/" aria-label="Return to TalentOS home" className="inline-flex min-h-10 items-center">
+          <BrandWordmark markSize={22} />
         </Link>
         <Link href="/login" className="text-sm font-medium text-[var(--color-accent-text)] hover:underline">
           Sign in
@@ -62,18 +62,18 @@ export default function RegisterPage() {
       </div>
 
       <main id="main-content" tabIndex={-1} className="mx-auto my-8 w-full max-w-[480px]">
-        <div className="rounded-[10px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6 sm:p-8">
+        <div className="surface-solid rounded-[20px] p-6 sm:p-8 shadow-[0_16px_44px_-24px_rgba(15,23,21,0.16)]">
           <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-            Create your TalentOS account
+            Create your account
           </h1>
           <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
-            Choose whether you are setting up an organization hiring workspace or applying for roles.
+            Set up an organization hiring workspace or create a candidate portal account.
           </p>
 
           {serverError && (
             <div
               role="alert"
-              className="mt-5 rounded-[7px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-3.5 py-2.5 text-sm text-[var(--color-error)]"
+              className="mt-5 rounded-[10px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-3.5 py-2.5 text-sm text-[var(--color-error)]"
             >
               {serverError}
             </div>
@@ -82,12 +82,12 @@ export default function RegisterPage() {
           <div
             role="radiogroup"
             aria-label="Account type"
-            className="mt-6 grid grid-cols-2 gap-2.5"
+            className="surface-segment-track mt-6 grid grid-cols-2 gap-1.5 rounded-[13px] p-1"
           >
             {(
               [
-                { id: "recruiter", label: "Hiring team", desc: "Manage jobs & pipeline" },
-                { id: "candidate", label: "Candidate", desc: "Apply & track status" },
+                { id: "recruiter", label: "Hiring team", desc: "Jobs and pipeline" },
+                { id: "candidate", label: "Candidate", desc: "Apply and track" },
               ] as const
             ).map((opt) => {
               const selected = accountType === opt.id;
@@ -98,10 +98,10 @@ export default function RegisterPage() {
                   role="radio"
                   aria-checked={selected}
                   onClick={() => setValue("account_type", opt.id)}
-                  className={`rounded-[7px] border p-3 text-left transition-colors ${
+                  className={`rounded-[10px] px-3 py-2.5 text-left transition-all ${
                     selected
-                      ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)]"
-                      : "border-[var(--color-border-strong)] bg-[var(--color-canvas)]"
+                      ? "bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(15,23,21,0.08)] ring-1 ring-[var(--color-border)]"
+                      : "hover:bg-[var(--color-glass-active)]"
                   }`}
                 >
                   <p className="text-sm font-semibold text-[var(--color-text)]">{opt.label}</p>
@@ -186,16 +186,15 @@ export default function RegisterPage() {
             </div>
 
             {accountType === "candidate" && (
-              <label className="flex items-start gap-2.5 rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-3 text-xs text-[var(--color-text-secondary)]">
+              <label className="flex items-start gap-2.5 rounded-[11px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3 text-xs text-[var(--color-text-secondary)]">
                 <input
                   type="checkbox"
                   className="mt-0.5 h-4 w-4 rounded"
                   {...register("consent_resume_processing")}
                 />
                 <span>
-                  I consent to TalentOS processing uploaded resumes for qualification evidence
-                  extraction during job applications. You can revoke consent or delete your records
-                  anytime in settings.
+                  I consent to TalentOS processing uploaded resumes for qualification evidence review during
+                  applications. You can revoke consent or delete records anytime in settings.
                 </span>
               </label>
             )}

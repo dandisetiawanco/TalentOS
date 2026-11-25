@@ -820,19 +820,47 @@ def _seed_organization_dataset(
         )
 
         if is_completed:
+            feedback_bank = [
+                (
+                    "Clear architectural reasoning, concise trade-off explanations, and grounded delivery examples.",
+                    "Would benefit from deeper exposure to multi-region database migrations during onboarding.",
+                    "Recommended to advance to final panel discussion.",
+                ),
+                (
+                    "Strong grasp of design-system accessibility, keyboard navigation, and component state modeling.",
+                    "Limited direct experience managing automated visual regression pipelines at scale.",
+                    "Positive signal for senior frontend scope.",
+                ),
+                (
+                    "Structured debugging approach under time constraints and thoughtful observability questions.",
+                    "Could sharpen prioritization framing when balancing platform maintenance against feature work.",
+                    "Worth proceeding to cross-functional collaboration round.",
+                ),
+                (
+                    "Articulate stakeholder communication with concrete examples of shipping measurable product improvements.",
+                    "Less hands-on ownership of low-level infrastructure capacity planning.",
+                    "Strong alignment with team operating cadence.",
+                ),
+                (
+                    "Demonstrated careful security thinking around permission boundaries and auditability.",
+                    "Would appreciate seeing a deeper walkthrough of distributed incident recovery.",
+                    "Recommended for next stage with engineering leadership.",
+                ),
+            ]
+            fb_strengths, fb_concerns, fb_notes = feedback_bank[i_idx % len(feedback_bank)]
             db.add(
                 InterviewFeedback(
                     organization_id=org.id,
                     interview_id=interview.id,
                     reviewer_id=hm_user.id,
                     recommendation="strong_yes" if i_idx % 2 == 0 else "yes",
-                    strengths="Clear architectural reasoning, concise trade-off explanations, and grounded delivery examples.",
-                    concerns="Would benefit from deeper exposure to multi-region database migrations during onboarding.",
-                    notes="Recommended to advance to final panel discussion.",
+                    strengths=fb_strengths,
+                    concerns=fb_concerns,
+                    notes=fb_notes,
                     rubric_scores={
                         "technical_depth": 5 if i_idx % 2 == 0 else 4,
-                        "problem_solving": 4,
-                        "communication": 5,
+                        "problem_solving": 4 + (i_idx % 2),
+                        "communication": 5 if i_idx % 3 != 1 else 4,
                         "collaboration": 4,
                     },
                     submitted_at=end_time + timedelta(hours=2),
@@ -840,6 +868,14 @@ def _seed_organization_dataset(
             )
 
     # Seed private recruiter notes (must NEVER be exposed to candidate accounts).
+    private_note_bank = [
+        "Aligned on role scope, four-week notice period, and target compensation band during screening.",
+        "Candidate prefers hybrid schedule in Jakarta or Singapore and asked detailed questions about roadmap ownership.",
+        "Portfolio walkthrough highlighted strong testing discipline and close collaboration with product designers.",
+        "Hiring manager requested follow-up on large-scale data migration experience during technical round.",
+        "Verified work authorization and availability for panel sessions next week.",
+        "Strong communication clarity; confirm preferred engineering team track before extending offer.",
+    ]
     for n_idx in range(6):
         db.add(
             RecruiterNote(
@@ -847,10 +883,7 @@ def _seed_organization_dataset(
                 candidate_id=candidates[n_idx].id,
                 application_id=applications[n_idx].id,
                 author_id=recruiter_user.id if n_idx % 2 == 0 else hm_user.id,
-                content=(
-                    "Internal hiring team note: Candidate aligned on role scope, notice period, "
-                    "and compensation band during initial screening call."
-                ),
+                content=private_note_bank[n_idx % len(private_note_bank)],
                 is_private=True,
             )
         )

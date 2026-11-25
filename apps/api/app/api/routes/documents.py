@@ -317,13 +317,19 @@ def analyze_resume(
             )
             existing_skills.add(skill.lower())
 
+    mode_label = "rule-based" if result.analysis_mode == "rule_based" else "AI-assisted"
+    provider_label = (
+        "built-in rule analyzer"
+        if result.provider_name == "deterministic_rules"
+        else result.provider_name.replace("_", " ")
+    )
     create_notification(
         db,
         user_id=auth.user.id,
         organization_id=auth.organization.id,
         event_type="resume_analysis_completed",
-        title=f"Resume analysis complete for {cand.full_name}",
-        body=f"Mode: {result.analysis_mode.replace('_', ' ')} ({result.provider_name}). Ready for human review.",
+        title=f"Resume review ready for {cand.full_name}",
+        body=f"Completed {mode_label} review using {provider_label}. Ready for human verification.",
         link_url=f"/workspace/candidates/{cand.id}",
     )
     record_activity(
@@ -333,7 +339,7 @@ def analyze_resume(
         entity_type="resume_analysis",
         entity_id=cand.id,
         action="analysis_executed",
-        summary=f"Ran {result.analysis_mode} resume analysis for {cand.full_name}"
+        summary=f"Ran {mode_label} resume review for {cand.full_name}"
         + (f" against {job.title}" if job else ""),
     )
     db.commit()

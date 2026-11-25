@@ -10,19 +10,19 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", type = "button", ...props }, ref) => {
     const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
       primary:
-        "bg-[var(--color-accent)] text-[var(--color-accent-ink)] border border-transparent hover:bg-[var(--color-accent-hover)] active:translate-y-px",
+        "bg-[var(--color-accent)] text-[var(--color-accent-ink)] border border-transparent shadow-[0_1px_2px_rgba(15,23,21,0.12)] hover:bg-[var(--color-accent-hover)] active:scale-[0.985]",
       secondary:
-        "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border-strong)] hover:bg-[var(--color-surface-muted)] active:translate-y-px",
+        "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border-strong)] shadow-[0_1px_2px_rgba(15,23,21,0.03)] hover:bg-[var(--color-surface-subtle)] active:scale-[0.985]",
       ghost:
-        "bg-transparent text-[var(--color-text-secondary)] border border-transparent hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text)]",
+        "bg-transparent text-[var(--color-text-secondary)] border border-transparent hover:bg-[var(--color-glass-active)] hover:text-[var(--color-text)]",
       danger:
-        "bg-[var(--color-error)] text-white border border-transparent hover:opacity-90 active:translate-y-px",
+        "bg-[var(--color-error)] text-white border border-transparent shadow-[0_1px_2px_rgba(180,35,24,0.2)] hover:opacity-92 active:scale-[0.985]",
     };
 
     const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
-      sm: "min-h-9 px-3 text-xs font-medium rounded-[6px] gap-1.5",
-      md: "min-h-11 px-4 text-sm font-medium rounded-[7px] gap-2",
-      lg: "min-h-12 px-5 text-sm font-medium rounded-[8px] gap-2",
+      sm: "min-h-9 px-3 text-xs font-medium rounded-[9px] gap-1.5",
+      md: "min-h-10 px-4 text-sm font-medium rounded-[10px] gap-2",
+      lg: "min-h-11 px-5 text-sm font-medium rounded-[11px] gap-2",
     };
 
     return (
@@ -30,7 +30,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         type={type}
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap transition-colors duration-150 disabled:opacity-50",
+          "inline-flex items-center justify-center whitespace-nowrap transition-[background-color,border-color,color,transform,opacity] duration-150 disabled:opacity-50",
           variantStyles[variant],
           sizeStyles[size],
           className
@@ -52,7 +52,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       ref={ref}
       aria-invalid={hasError || undefined}
       className={cn(
-        "w-full min-h-11 rounded-[7px] border bg-[var(--color-surface)] px-3.5 py-2 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] transition-colors",
+        "w-full min-h-10 rounded-[10px] border bg-[var(--color-surface)] px-3.5 py-2 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] transition-colors",
         hasError
           ? "border-[var(--color-error)]"
           : "border-[var(--color-border-strong)] hover:border-[var(--color-text-secondary)]",
@@ -74,7 +74,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       ref={ref}
       aria-invalid={hasError || undefined}
       className={cn(
-        "w-full min-h-24 rounded-[7px] border bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] transition-colors",
+        "w-full min-h-24 rounded-[10px] border bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] transition-colors",
         hasError
           ? "border-[var(--color-error)]"
           : "border-[var(--color-border-strong)] hover:border-[var(--color-text-secondary)]",
@@ -96,7 +96,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       ref={ref}
       aria-invalid={hasError || undefined}
       className={cn(
-        "w-full min-h-11 rounded-[7px] border bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text)] transition-colors",
+        "w-full min-h-10 rounded-[10px] border bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text)] transition-colors",
         hasError
           ? "border-[var(--color-error)]"
           : "border-[var(--color-border-strong)] hover:border-[var(--color-text-secondary)]",
@@ -117,21 +117,30 @@ export interface StatusTagProps {
 }
 
 export function StatusTag({ tone = "neutral", children, className }: StatusTagProps) {
-  const styles: Record<NonNullable<StatusTagProps["tone"]>, string> = {
-    neutral: "bg-[var(--color-surface-muted)] text-[var(--color-text)] border-[var(--color-border)]",
-    accent: "bg-[var(--color-accent-soft)] text-[var(--color-accent-text)] border-[var(--color-border)]",
-    success: "bg-[var(--color-accent-soft)] text-[var(--color-success)] border-[var(--color-border)]",
-    warning: "bg-[var(--color-warning-soft)] text-[var(--color-warning)] border-[var(--color-border)]",
-    error: "bg-[var(--color-error-soft)] text-[var(--color-error)] border-[var(--color-border)]",
+  const dotStyles: Record<NonNullable<StatusTagProps["tone"]>, string> = {
+    neutral: "bg-[var(--color-text-secondary)]",
+    accent: "bg-[var(--color-accent)]",
+    success: "bg-[var(--color-success)]",
+    warning: "bg-[var(--color-warning)]",
+    error: "bg-[var(--color-error)]",
   };
+  const textStyles: Record<NonNullable<StatusTagProps["tone"]>, string> = {
+    neutral: "text-[var(--color-text-secondary)] bg-[var(--color-surface-subtle)] border-[var(--color-border)]",
+    accent: "text-[var(--color-accent-text)] bg-[var(--color-accent-soft)] border-transparent",
+    success: "text-[var(--color-accent-text)] bg-[var(--color-accent-soft)] border-transparent",
+    warning: "text-[var(--color-warning)] bg-[var(--color-warning-soft)] border-transparent",
+    error: "text-[var(--color-error)] bg-[var(--color-error-soft)] border-transparent",
+  };
+  const showDot = typeof children === "string";
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-[5px] border px-2 py-0.5 text-xs font-medium leading-5",
-        styles[tone],
+        "inline-flex items-center gap-1.5 rounded-[7px] border px-2 py-0.5 text-xs font-medium leading-5",
+        textStyles[tone],
         className
       )}
     >
+      {showDot && <span aria-hidden="true" className={cn("h-1.5 w-1.5 shrink-0 rounded-full", dotStyles[tone])} />}
       {children}
     </span>
   );

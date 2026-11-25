@@ -86,8 +86,8 @@ export default function CandidateProfilePage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-          Candidate profile
+        <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+          Your profile
         </h1>
         <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
           Keep your contact details, summary, and skills up to date across your job applications.
@@ -95,7 +95,7 @@ export default function CandidateProfilePage() {
       </div>
 
       {statusMsg && (
-        <div role="status" className="rounded-[7px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]">
+        <div role="status" className="rounded-[12px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]">
           {statusMsg}
         </div>
       )}
@@ -105,7 +105,7 @@ export default function CandidateProfilePage() {
           e.preventDefault();
           saveMutation.mutate();
         }}
-        className="space-y-4 rounded-[9px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6"
+        className="surface-solid space-y-4 rounded-[18px] p-6"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -113,7 +113,7 @@ export default function CandidateProfilePage() {
             <Input id="cp-name" required value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-1.5" />
           </div>
           <div>
-            <label htmlFor="cp-headline" className="block text-sm font-medium text-[var(--color-text)]">Professional headline</label>
+            <label htmlFor="cp-headline" className="block text-sm font-medium text-[var(--color-text)]">Headline</label>
             <Input id="cp-headline" value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Frontend Engineer" className="mt-1.5" />
           </div>
         </div>
@@ -154,15 +154,15 @@ export default function CandidateProfilePage() {
         </div>
 
         <div>
-          <label htmlFor="cp-bio" className="block text-sm font-medium text-[var(--color-text)]">Professional summary</label>
+          <label htmlFor="cp-bio" className="block text-sm font-medium text-[var(--color-text)]">Summary</label>
           <Textarea id="cp-bio" rows={4} value={bio} onChange={(e) => setBio(e.target.value)} className="mt-1.5" />
         </div>
 
-        <label className="flex items-start gap-2.5 rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-3.5 text-xs text-[var(--color-text-secondary)]">
+        <label className="flex items-start gap-2.5 rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-4 text-xs leading-relaxed text-[var(--color-text-secondary)]">
           <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-4 w-4" />
           <span>
-            Allow hiring teams I apply to run structured resume evidence extraction on my uploaded
-            documents. Decisions are always made by human reviewers.
+            Allow hiring teams I apply to run structured resume evidence extraction on my uploaded files. Hiring
+            decisions remain human-led.
           </span>
         </label>
 

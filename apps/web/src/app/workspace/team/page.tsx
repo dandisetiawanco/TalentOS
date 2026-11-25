@@ -7,7 +7,7 @@ import { ROLE_LABELS, type TeamMember } from "@talentos/contracts";
 import { Button, Input, LoadingRegion, NativeDialog, Select, StatePanel, StatusTag } from "@talentos/ui";
 import { ApiError, apiRequest } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
-import { formatShortDate } from "@/lib/format";
+import { formatShortDate, initialsFor } from "@/lib/format";
 
 export default function WorkspaceTeamPage() {
   const queryClient = useQueryClient();
@@ -68,18 +68,17 @@ export default function WorkspaceTeamPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-            Team and access roles
+          <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+            Team
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            Role permissions are enforced on every API route. Only Organization Owners can invite
-            members or modify roles.
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+            Manage workspace members and role permissions enforced across your organization.
           </p>
         </div>
         {isOwner ? (
-          <Button variant="primary" onClick={() => setInviteOpen(true)}>
+          <Button variant="primary" size="sm" onClick={() => setInviteOpen(true)}>
             <UserPlus className="h-4 w-4" aria-hidden="true" />
             Invite member
           </Button>
@@ -99,7 +98,7 @@ export default function WorkspaceTeamPage() {
             <thead>
               <tr>
                 <th scope="col">Member</th>
-                <th scope="col">Department &amp; title</th>
+                <th scope="col">Department and title</th>
                 <th scope="col">Role</th>
                 <th scope="col">Status</th>
                 <th scope="col">Added</th>
@@ -109,8 +108,18 @@ export default function WorkspaceTeamPage() {
               {teamQuery.data.map((member) => (
                 <tr key={member.id}>
                   <td data-primary="true" data-label="Member">
-                    <p className="font-medium text-[var(--color-text)]">{member.full_name}</p>
-                    <p className="text-xs text-[var(--color-text-secondary)]">{member.email}</p>
+                    <div className="flex items-center gap-2.5">
+                      <span
+                        aria-hidden="true"
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] text-xs font-semibold text-[var(--color-text)]"
+                      >
+                        {initialsFor(member.full_name)}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-medium text-[var(--color-text)]">{member.full_name}</p>
+                        <p className="truncate text-xs text-[var(--color-text-secondary)]">{member.email}</p>
+                      </div>
+                    </div>
                   </td>
                   <td data-label="Title" className="text-xs text-[var(--color-text-secondary)]">
                     {member.title || "Team member"} {member.department ? `· ${member.department}` : ""}
@@ -126,7 +135,7 @@ export default function WorkspaceTeamPage() {
                             nextRole: e.target.value as TeamMember["role"],
                           })
                         }
-                        className="min-h-9 rounded-[6px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 text-xs"
+                        className="min-h-8 rounded-[8px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2.5 text-xs"
                       >
                         <option value="organization_owner">Organization Owner</option>
                         <option value="recruiter">Recruiter</option>
@@ -139,7 +148,7 @@ export default function WorkspaceTeamPage() {
                   <td data-label="Status">
                     <StatusTag tone={member.status === "active" ? "success" : "neutral"}>{member.status}</StatusTag>
                   </td>
-                  <td data-label="Added" className="font-mono text-xs text-[var(--color-text-secondary)]">
+                  <td data-label="Added" className="text-xs tabular-nums text-[var(--color-text-secondary)]">
                     {formatShortDate(member.created_at)}
                   </td>
                 </tr>
@@ -156,7 +165,7 @@ export default function WorkspaceTeamPage() {
         description="Add a recruiter, hiring manager, or co-owner to your organization."
       >
         {errorMsg && (
-          <div role="alert" className="mb-3 rounded-[6px] border border-[var(--color-error)] bg-[var(--color-error-soft)] p-3 text-xs text-[var(--color-error)]">
+          <div role="alert" className="mb-3 rounded-[10px] border border-[var(--color-error)] bg-[var(--color-error-soft)] p-3 text-xs text-[var(--color-error)]">
             {errorMsg}
           </div>
         )}

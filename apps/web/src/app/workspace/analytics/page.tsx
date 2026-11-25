@@ -3,15 +3,15 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  ResponsiveContainer,
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  CartesianGrid,
-  LineChart,
-  Line,
 } from "recharts";
 import { Download } from "lucide-react";
 import type { AnalyticsOverview, JobRecord, PaginatedResponse } from "@talentos/contracts";
@@ -41,19 +41,19 @@ export default function WorkspaceAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-            Recruitment analytics
+          <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+            Analytics
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            Operational hiring funnel metrics derived from persisted stage transitions. No
-            demographic analytics or sensitive candidate profiling are collected.
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+            Hiring funnel velocity and stage conversion derived from persisted stage transitions.
           </p>
         </div>
         <Button
           variant="secondary"
           size="sm"
+          className="shrink-0 whitespace-nowrap"
           onClick={() =>
             void downloadAuthenticatedBlob(
               `/analytics/export.csv?${params.toString()}`,
@@ -66,20 +66,21 @@ export default function WorkspaceAnalyticsPage() {
         </Button>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <Select aria-label="Date window" value={days} onChange={(e) => setDays(e.target.value)} className="w-40">
+      {/* Integrated filter bar */}
+      <div className="surface-solid flex flex-wrap items-center gap-3 rounded-[14px] p-3">
+        <Select aria-label="Date window" value={days} onChange={(e) => setDays(e.target.value)} className="w-40 text-xs">
           <option value="30">Last 30 days</option>
           <option value="60">Last 60 days</option>
           <option value="90">Last 90 days</option>
           <option value="180">Last 180 days</option>
         </Select>
-        <Select aria-label="Department filter" value={department} onChange={(e) => setDepartment(e.target.value)} className="w-44">
+        <Select aria-label="Department filter" value={department} onChange={(e) => setDepartment(e.target.value)} className="w-44 text-xs">
           <option value="">All departments</option>
           {["Engineering", "Design", "Data", "Security", "Product", "People"].map((d) => (
             <option key={d} value={d}>{d}</option>
           ))}
         </Select>
-        <Select aria-label="Job filter" value={jobId} onChange={(e) => setJobId(e.target.value)} className="w-64">
+        <Select aria-label="Job filter" value={jobId} onChange={(e) => setJobId(e.target.value)} className="w-60 text-xs">
           <option value="">All job openings</option>
           {jobsQuery.data?.items.map((j) => (
             <option key={j.id} value={j.id}>{j.title}</option>
@@ -100,45 +101,59 @@ export default function WorkspaceAnalyticsPage() {
 
       {data && (
         <>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="surface-solid grid divide-y divide-[var(--color-border)] rounded-[16px] sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
             {[
               { label: "Applications in range", value: String(data.total_applications) },
               {
                 label: "Average time to hire",
-                value: data.avg_time_to_hire_days != null ? `${data.avg_time_to_hire_days} days` : "Insufficient data",
+                value: data.avg_time_to_hire_days != null ? `${data.avg_time_to_hire_days} days` : "Pending",
               },
               {
-                label: "Interview completion rate",
-                value: data.interview_completion_rate_pct != null ? `${data.interview_completion_rate_pct}%` : "Insufficient data",
+                label: "Interview completion",
+                value: data.interview_completion_rate_pct != null ? `${data.interview_completion_rate_pct}%` : "Pending",
               },
               {
-                label: "Offer acceptance rate",
-                value: data.offer_acceptance_rate_pct != null ? `${data.offer_acceptance_rate_pct}%` : "Insufficient data",
+                label: "Offer acceptance",
+                value: data.offer_acceptance_rate_pct != null ? `${data.offer_acceptance_rate_pct}%` : "Pending",
               },
             ].map((m) => (
-              <div key={m.label} className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-                <p className="text-xs text-[var(--color-text-secondary)]">{m.label}</p>
-                <p className="mt-1.5 font-mono text-2xl font-semibold tabular-nums text-[var(--color-text)]">{m.value}</p>
+              <div key={m.label} className="p-5">
+                <p className="text-xs font-medium text-[var(--color-text-secondary)]">{m.label}</p>
+                <p className="mt-1.5 text-[1.6rem] font-semibold leading-tight tracking-[-0.025em] tabular-nums text-[var(--color-text)]">
+                  {m.value}
+                </p>
               </div>
             ))}
           </div>
 
           <div className="grid gap-5 lg:grid-cols-2">
-            <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <section className="surface-solid rounded-[16px] p-5">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">
                 Daily application volume ({data.date_range_days} days)
               </h2>
-              <div className="mt-4 h-64 w-full" role="img" aria-label="Line chart of applications over time">
+              <div className="mt-4 h-60 w-full" role="img" aria-label="Line chart of applications over time">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data.applications_over_time} margin={{ top: 8, right: 12, left: -12, bottom: 4 }}>
+                  <LineChart data={data.applications_over_time} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                    <XAxis dataKey="date" tickFormatter={(v: string) => v.slice(5)} minTickGap={24} tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }} axisLine={false} tickLine={false} />
-                    <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }} axisLine={false} tickLine={false} />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(v: string) => v.slice(5)}
+                      minTickGap={24}
+                      tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      allowDecimals={false}
+                      tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "var(--color-surface)",
                         border: "1px solid var(--color-border-strong)",
-                        borderRadius: "6px",
+                        borderRadius: "10px",
                         fontSize: "12px",
                         color: "var(--color-text)",
                       }}
@@ -149,29 +164,38 @@ export default function WorkspaceAnalyticsPage() {
               </div>
             </section>
 
-            <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <section className="surface-solid rounded-[16px] p-5">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">
-                Average days spent per recruitment stage
+                Average days per stage
               </h2>
-              <div className="mt-4 h-64 w-full" role="img" aria-label="Bar chart of average days per stage">
+              <div className="mt-4 h-60 w-full" role="img" aria-label="Bar chart of average days per stage">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={data.avg_days_per_stage.map((p) => ({ ...p, avg_days: p.avg_days ?? 0 }))}
-                    margin={{ top: 8, right: 12, left: -12, bottom: 4 }}
+                    margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }} axisLine={false} tickLine={false} />
+                    <XAxis
+                      dataKey="label"
+                      tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11, fill: "var(--color-text-secondary)" }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "var(--color-surface)",
                         border: "1px solid var(--color-border-strong)",
-                        borderRadius: "6px",
+                        borderRadius: "10px",
                         fontSize: "12px",
                         color: "var(--color-text)",
                       }}
                     />
-                    <Bar dataKey="avg_days" name="Average days" fill="var(--color-accent)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="avg_days" name="Average days" fill="var(--color-accent)" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -179,16 +203,20 @@ export default function WorkspaceAnalyticsPage() {
           </div>
 
           <div className="grid gap-5 lg:grid-cols-2">
-            <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <section className="surface-solid rounded-[16px] p-5">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">Stage conversion breakdown</h2>
-              <div className="mt-3 divide-y divide-[var(--color-border)]">
+              <div className="mt-3 divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">
                 {data.stage_distribution.map((row) => (
                   <div key={row.stage} className="flex items-center justify-between py-2.5 text-sm">
                     <span className="text-[var(--color-text)]">{row.label}</span>
-                    <div className="flex items-center gap-4 font-mono text-xs tabular-nums">
-                      <span className="text-[var(--color-text)]">{row.count}</span>
+                    <div className="flex items-center gap-5 text-xs tabular-nums">
+                      <span className="font-medium text-[var(--color-text)]">{row.count}</span>
                       <span className="w-24 text-right text-[var(--color-text-secondary)]">
-                        {row.conversion_from_previous_pct != null ? `${row.conversion_from_previous_pct}% conv.` : "Baseline"}
+                        {row.conversion_from_previous_pct != null
+                          ? `${row.conversion_from_previous_pct}% conv.`
+                          : row.stage === "rejected"
+                          ? "Closed"
+                          : "Baseline"}
                       </span>
                     </div>
                   </div>
@@ -196,7 +224,7 @@ export default function WorkspaceAnalyticsPage() {
               </div>
             </section>
 
-            <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <section className="surface-solid rounded-[16px] p-5">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">Hiring activity by department</h2>
               <div tabIndex={0} role="region" aria-label="Department hiring activity" className="mt-3 talentos-table-wrapper">
                 <table className="talentos-table">
@@ -215,10 +243,10 @@ export default function WorkspaceAnalyticsPage() {
                         <td data-primary="true" data-label="Department" className="font-medium text-[var(--color-text)]">
                           {dept.department}
                         </td>
-                        <td data-label="Open" className="font-mono text-xs">{dept.open_jobs}</td>
-                        <td data-label="Applications" className="font-mono text-xs">{dept.applications}</td>
-                        <td data-label="Interviews" className="font-mono text-xs">{dept.interviews}</td>
-                        <td data-label="Hired" className="font-mono text-xs">{dept.hired}</td>
+                        <td data-label="Open" className="text-xs tabular-nums">{dept.open_jobs}</td>
+                        <td data-label="Applications" className="text-xs tabular-nums">{dept.applications}</td>
+                        <td data-label="Interviews" className="text-xs tabular-nums">{dept.interviews}</td>
+                        <td data-label="Hired" className="text-xs tabular-nums">{dept.hired}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -227,8 +255,8 @@ export default function WorkspaceAnalyticsPage() {
             </section>
           </div>
 
-          <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-            <h2 className="text-sm font-semibold text-[var(--color-text)]">Applications by job opening</h2>
+          <section className="surface-solid rounded-[16px] p-5">
+            <h2 className="text-sm font-semibold text-[var(--color-text)]">Applications by opening</h2>
             <div tabIndex={0} role="region" aria-label="Applications by job" className="mt-3 talentos-table-wrapper">
               <table className="talentos-table">
                 <thead>
@@ -248,10 +276,10 @@ export default function WorkspaceAnalyticsPage() {
                         {row.title}
                       </td>
                       <td data-label="Department" className="text-xs text-[var(--color-text-secondary)]">{row.department}</td>
-                      <td data-label="Applications" className="font-mono text-xs">{row.applications}</td>
-                      <td data-label="Interviews" className="font-mono text-xs">{row.interviews}</td>
-                      <td data-label="Offers" className="font-mono text-xs">{row.offers}</td>
-                      <td data-label="Hired" className="font-mono text-xs">{row.hired}</td>
+                      <td data-label="Applications" className="text-xs tabular-nums">{row.applications}</td>
+                      <td data-label="Interviews" className="text-xs tabular-nums">{row.interviews}</td>
+                      <td data-label="Offers" className="text-xs tabular-nums">{row.offers}</td>
+                      <td data-label="Hired" className="text-xs tabular-nums">{row.hired}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -259,15 +287,17 @@ export default function WorkspaceAnalyticsPage() {
             </div>
           </section>
 
-          <details className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <details className="surface-solid rounded-[16px] p-5">
             <summary className="text-sm font-semibold text-[var(--color-text)]">
-              Documented metric definitions
+              Metric definitions
             </summary>
             <dl className="mt-4 grid gap-3 sm:grid-cols-2">
               {Object.entries(data.metric_definitions).map(([k, desc]) => (
-                <div key={k} className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-3">
-                  <dt className="font-mono text-xs font-medium text-[var(--color-text)]">{k}</dt>
-                  <dd className="mt-1 text-xs text-[var(--color-text-secondary)]">{desc}</dd>
+                <div key={k} className="rounded-[11px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3.5">
+                  <dt className="text-xs font-semibold text-[var(--color-text)] capitalize">
+                    {k.replace(/_/g, " ")}
+                  </dt>
+                  <dd className="mt-1 text-xs leading-relaxed text-[var(--color-text-secondary)]">{desc}</dd>
                 </div>
               ))}
             </dl>

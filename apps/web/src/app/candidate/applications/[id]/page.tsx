@@ -37,31 +37,31 @@ export default function CandidateApplicationDetailPage() {
       <div>
         <Link
           href="/candidate/applications"
-          className="inline-flex min-h-10 items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+          className="inline-flex min-h-10 items-center gap-1.5 text-sm text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)]"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to applications
+          Applications
         </Link>
 
-        <div className="mt-2 flex flex-wrap items-start justify-between gap-4 rounded-[9px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6">
+        <div className="surface-solid mt-2 flex flex-wrap items-start justify-between gap-4 rounded-[18px] p-6">
           <div>
             <StatusTag tone={stageTone(app.stage)}>{STAGE_LABELS[app.stage]}</StatusTag>
-            <h1 className="mt-2 text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
+            <h1 className="mt-2.5 text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
               {app.job_title}
             </h1>
             <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
               {app.organization_name} · {app.job_department} · {app.job_location}
             </p>
           </div>
-          <span className="font-mono text-xs text-[var(--color-text-secondary)]">
+          <span className="text-xs tabular-nums text-[var(--color-text-secondary)]">
             Applied {formatShortDate(app.applied_at)}
           </span>
         </div>
       </div>
 
-      <section className="rounded-[9px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <h2 className="text-base font-semibold text-[var(--color-text)]">Application timeline</h2>
-        <ol className="mt-4 space-y-4 border-l-2 border-[var(--color-border)] pl-5">
+      <section className="surface-solid rounded-[18px] p-6">
+        <h2 className="text-sm font-semibold text-[var(--color-text)]">Application timeline</h2>
+        <ol className="mt-5 space-y-5 border-l-2 border-[var(--color-border-strong)] pl-5">
           {app.timeline.map((step) => (
             <li key={step.id} className="relative">
               <span
@@ -73,7 +73,7 @@ export default function CandidateApplicationDetailPage() {
               <p className="text-sm font-medium text-[var(--color-text)]">
                 {STAGE_LABELS[step.to_stage]}
               </p>
-              <p className="font-mono text-xs text-[var(--color-text-secondary)]">
+              <p className="mt-0.5 text-xs tabular-nums text-[var(--color-text-secondary)]">
                 {formatDateTime(step.changed_at)}
               </p>
             </li>
@@ -82,23 +82,23 @@ export default function CandidateApplicationDetailPage() {
       </section>
 
       {app.interviews.length > 0 && (
-        <section className="rounded-[9px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-          <h2 className="text-base font-semibold text-[var(--color-text)]">Interview invitations</h2>
-          <ul className="mt-4 space-y-3">
+        <section className="surface-solid rounded-[18px] p-6">
+          <h2 className="text-sm font-semibold text-[var(--color-text)]">Interview invitations</h2>
+          <ul className="mt-4 divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">
             {app.interviews.map((iv) => (
-              <li key={iv.id} className="rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-4">
+              <li key={iv.id} className="py-4 last:pb-0">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-sm font-semibold text-[var(--color-text)]">{iv.title}</p>
                   <StatusTag tone={iv.status === "completed" ? "success" : "accent"}>{iv.status}</StatusTag>
                 </div>
-                <p className="mt-1 inline-flex items-center gap-1.5 font-mono text-xs text-[var(--color-text-secondary)]">
+                <p className="mt-1 inline-flex items-center gap-1.5 text-xs tabular-nums text-[var(--color-text-secondary)]">
                   <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                   {formatDateTime(iv.scheduled_start)} · {iv.duration_minutes} min ({iv.timezone})
                 </p>
                 {iv.instructions && (
-                  <p className="mt-2 text-xs text-[var(--color-text-secondary)]">{iv.instructions}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-[var(--color-text-secondary)]">{iv.instructions}</p>
                 )}
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-3">
                   <Button
                     variant="secondary"
                     size="sm"

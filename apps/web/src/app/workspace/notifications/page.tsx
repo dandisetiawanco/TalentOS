@@ -37,14 +37,13 @@ export default function WorkspaceNotificationsPage() {
 
   return (
     <div className="max-w-3xl space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
+          <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
             Notifications
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            Persistent in-app alerts for new applications, interviews, status updates, and resume
-            analyses. Email delivery activates only when SMTP is configured on the server.
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+            In-app updates for new applications, interview schedules, and completed resume reviews.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -69,12 +68,12 @@ export default function WorkspaceNotificationsPage() {
       )}
 
       {items.length > 0 && (
-        <ul className="divide-y divide-[var(--color-border)] overflow-hidden rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <ul className="surface-solid divide-y divide-[var(--color-border)] overflow-hidden rounded-[16px]">
           {items.map((n) => (
             <li
               key={n.id}
               className={`flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between ${
-                n.is_read ? "" : "bg-[var(--color-accent-soft)]/35"
+                n.is_read ? "" : "bg-[var(--color-accent-soft)]/30"
               }`}
             >
               <div className="min-w-0">
@@ -83,7 +82,7 @@ export default function WorkspaceNotificationsPage() {
                   {!n.is_read && <StatusTag tone="accent">Unread</StatusTag>}
                 </div>
                 <p className="mt-0.5 text-xs text-[var(--color-text-secondary)]">{n.body}</p>
-                <p className="mt-1 font-mono text-[11px] text-[var(--color-text-secondary)]">
+                <p className="mt-1 text-[11px] tabular-nums text-[var(--color-text-secondary)]">
                   {formatRelativeTime(n.created_at)}
                 </p>
               </div>

@@ -14,8 +14,8 @@ interface NativeDialogProps {
 }
 
 /**
- * Accessible modal dialog built on the native HTML <dialog> element.
- * Avoids redundant role="dialog" / aria-modal attributes and preserves browser focus management.
+ * Accessible modal dialog built on the native HTML <dialog> element,
+ * styled with the Liquid Glass Overlay material level.
  */
 export function NativeDialog({
   open,
@@ -94,13 +94,13 @@ export function NativeDialog({
       aria-describedby={description ? descId : undefined}
       {...({ closedby: dismissOnBackdrop ? "any" : "closerequest" } as Record<string, string>)}
       className={cn(
-        "talentos-dialog m-auto w-[min(92vw,560px)] max-h-[88dvh] rounded-[10px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-0 text-[var(--color-text)] shadow-lg",
+        "talentos-dialog surface-glass-overlay m-auto w-[min(92vw,560px)] max-h-[88dvh] rounded-[18px] p-0 text-[var(--color-text)]",
         className
       )}
     >
-      <div className="flex items-start justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4">
+      <div className="flex items-start justify-between gap-4 border-b border-[var(--color-border)] px-6 py-4">
         <div className="min-w-0">
-          <h1 id={titleId} className="text-base font-semibold tracking-[-0.015em] text-[var(--color-text)]">
+          <h1 id={titleId} className="text-[15px] font-semibold tracking-[-0.015em] text-[var(--color-text)]">
             {title}
           </h1>
           {description && (
@@ -113,12 +113,12 @@ export function NativeDialog({
           type="button"
           onClick={() => dialogRef.current?.close()}
           aria-label="Close dialog"
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] border border-[var(--color-border)] text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-text)]"
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] text-base text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-glass-active)] hover:text-[var(--color-text)]"
         >
           <span aria-hidden="true">×</span>
         </button>
       </div>
-      <div className="overflow-y-auto px-5 py-4">{children}</div>
+      <div className="overflow-y-auto px-6 py-5">{children}</div>
     </dialog>
   );
 }

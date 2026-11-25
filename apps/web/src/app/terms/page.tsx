@@ -12,15 +12,14 @@ export default function TermsPage() {
     <div className="min-h-dvh flex flex-col">
       <PublicHeader />
       <main id="main-content" tabIndex={-1} className="flex-1">
-        <article className="mx-auto max-w-[840px] px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-          <p className="font-mono text-xs text-[var(--color-text-secondary)]">Usage terms</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-[var(--color-text)]">
+        <article className="mx-auto max-w-[820px] px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <h1 className="text-3xl font-semibold tracking-[-0.03em] text-[var(--color-text)]">
             Terms of Use
           </h1>
 
-          <div className="mt-8 space-y-6 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+          <div className="surface-solid mt-8 space-y-6 rounded-[18px] p-6 sm:p-8 text-sm leading-relaxed text-[var(--color-text-secondary)]">
             <section>
-              <h2 className="text-base font-semibold text-[var(--color-text)]">1. Portfolio showcase scope</h2>
+              <h2 className="text-base font-semibold text-[var(--color-text)]">Portfolio showcase scope</h2>
               <p className="mt-2">
                 TalentOS is an independent software engineering portfolio project authored by Dandi
                 Setiawan. Demonstration organizations, job openings, candidate records, and meeting
@@ -30,7 +29,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-base font-semibold text-[var(--color-text)]">2. Human responsibility for hiring decisions</h2>
+              <h2 className="text-base font-semibold text-[var(--color-text)]">Human responsibility for hiring decisions</h2>
               <p className="mt-2">
                 Any automated or AI-assisted resume extraction provided by TalentOS is an informational
                 review aid only. Authorized human reviewers remain solely responsible for verifying
@@ -40,7 +39,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-base font-semibold text-[var(--color-text)]">3. Acceptable use of demo sessions</h2>
+              <h2 className="text-base font-semibold text-[var(--color-text)]">Acceptable use of demo sessions</h2>
               <p className="mt-2">
                 Do not upload sensitive real personal documents, government identifiers, or confidential
                 corporate records into public demo environments. Demo sessions are isolated per
@@ -49,7 +48,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-base font-semibold text-[var(--color-text)]">4. Implemented capabilities and limits</h2>
+              <h2 className="text-base font-semibold text-[var(--color-text)]">Implemented capabilities and limits</h2>
               <p className="mt-2">
                 Calendar integration is delivered through standards-compliant downloadable ICS files
                 rather than external OAuth calendar sync. Email delivery requires SMTP configuration

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft } from "lucide-react";
 import { jobFormSchema, type JobRecord, type TeamMember } from "@talentos/contracts";
 import { Button, Input, Select, Textarea } from "@talentos/ui";
 import { ApiError, apiRequest } from "@/lib/api";
@@ -110,28 +109,20 @@ export default function NewJobPage() {
   };
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-3xl space-y-5">
       <div>
-        <Link
-          href="/workspace/jobs"
-          className="inline-flex min-h-10 items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to job openings
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
+        <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
           Create job opening
         </h1>
-        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-          Define clear required qualifications and skills. Resume evidence checks evaluate candidate
-          documents directly against the criteria you specify here.
+        <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+          Define clear required qualifications and skills. Resume insights compare candidate files directly against these criteria.
         </p>
       </div>
 
       {serverError && (
         <div
           role="alert"
-          className="rounded-[8px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-4 py-3 text-sm text-[var(--color-error)]"
+          className="rounded-[12px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-4 py-3 text-sm text-[var(--color-error)]"
         >
           {serverError}
         </div>
@@ -140,7 +131,7 @@ export default function NewJobPage() {
       <form
         onSubmit={handleSubmit(submitJob)}
         noValidate
-        className="space-y-5 rounded-[10px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6"
+        className="surface-solid space-y-5 rounded-[18px] p-6"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -200,7 +191,7 @@ export default function NewJobPage() {
             </label>
             <Input
               id="job-location"
-              placeholder="e.g. Jakarta / Remote APAC"
+              placeholder="e.g. Jakarta, Remote APAC"
               hasError={Boolean(errors.location)}
               className="mt-1.5"
               {...register("location")}
@@ -312,7 +303,7 @@ export default function NewJobPage() {
             <Textarea
               id="job-pref"
               rows={4}
-              placeholder="Experience with Docker and CI/CD&#10;Document parsing pipelines"
+              placeholder="Experience with Docker and automated pipelines&#10;Document parsing workflows"
               className="mt-1.5"
               {...register("preferred_qualifications_text")}
             />
@@ -341,7 +332,7 @@ export default function NewJobPage() {
             disabled={isSubmitting}
             onClick={() => setValue("status", "draft")}
           >
-            Save as draft
+            Save draft
           </Button>
           <Button
             type="submit"

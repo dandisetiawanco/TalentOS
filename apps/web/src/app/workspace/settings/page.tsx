@@ -68,30 +68,34 @@ export default function WorkspaceSettingsPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-          Workspace settings
+        <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+          Settings
         </h1>
-        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-          Configure appearance, notification rules, and organization-level retention policies.
+        <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+          Configure appearance, notification rules, and organization retention policies.
         </p>
       </div>
 
       {statusMsg && (
-        <div role="status" className="rounded-[7px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]">
+        <div role="status" className="rounded-[12px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]">
           {statusMsg}
         </div>
       )}
 
-      {/* Three-state theme control (System / Light / Dark) */}
-      <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <h2 className="text-base font-semibold text-[var(--color-text)]">Appearance</h2>
+      {/* Three-state OS appearance control */}
+      <section className="surface-solid rounded-[16px] p-6">
+        <h2 className="text-sm font-semibold text-[var(--color-text)]">Appearance</h2>
         <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
-          Choose whether TalentOS follows your operating system color scheme or locks to light or dark mode.
+          Match your system appearance or keep TalentOS in light or dark mode.
         </p>
-        <div role="radiogroup" aria-label="Theme preference" className="mt-4 grid grid-cols-3 gap-2.5">
+        <div
+          role="radiogroup"
+          aria-label="Theme preference"
+          className="surface-segment-track mt-4 grid grid-cols-3 gap-1.5 rounded-[12px] p-1"
+        >
           {(
             [
-              { value: "system", label: "System default" },
+              { value: "system", label: "System" },
               { value: "light", label: "Light" },
               { value: "dark", label: "Dark" },
             ] as Array<{ value: ThemePreference; label: string }>
@@ -102,10 +106,10 @@ export default function WorkspaceSettingsPage() {
               role="radio"
               aria-checked={theme === option.value}
               onClick={() => setTheme(option.value)}
-              className={`min-h-11 rounded-[7px] border px-3 text-sm font-medium transition-colors ${
+              className={`min-h-9 rounded-[9px] px-3 text-sm font-medium transition-all ${
                 theme === option.value
-                  ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent-text)]"
-                  : "border-[var(--color-border-strong)] bg-[var(--color-canvas)] text-[var(--color-text)]"
+                  ? "bg-[var(--color-surface)] text-[var(--color-text)] shadow-[0_1px_2px_rgba(15,23,21,0.08)] ring-1 ring-[var(--color-border)]"
+                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
               }`}
             >
               {option.label}
@@ -115,10 +119,10 @@ export default function WorkspaceSettingsPage() {
       </section>
 
       {/* Notification preferences */}
-      <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <h2 className="text-base font-semibold text-[var(--color-text)]">Notification preferences</h2>
+      <section className="surface-solid rounded-[16px] p-6">
+        <h2 className="text-sm font-semibold text-[var(--color-text)]">Notifications</h2>
         <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
-          In-app notifications are persisted per user. External email dispatch is disabled until SMTP is configured.
+          In-app notifications stay synced per user. External email dispatch activates when SMTP is configured.
         </p>
         <div className="mt-4 space-y-3">
           <label className="flex items-center gap-2.5 text-sm text-[var(--color-text)]">
@@ -131,23 +135,23 @@ export default function WorkspaceSettingsPage() {
           </label>
           <label className="flex items-center gap-2.5 text-sm text-[var(--color-text)]">
             <input type="checkbox" checked={notifyResume} onChange={(e) => setNotifyResume(e.target.checked)} />
-            Notify when resume evidence analysis completes
+            Notify when resume qualification checks complete
           </label>
         </div>
         <div className="mt-4 flex justify-end">
           <Button variant="secondary" size="sm" onClick={() => savePrefsMutation.mutate()} disabled={savePrefsMutation.isPending}>
-            Save notification preferences
+            Save preferences
           </Button>
         </div>
       </section>
 
       {/* Organization Settings */}
-      <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+      <section className="surface-solid rounded-[16px] p-6">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-base font-semibold text-[var(--color-text)]">Organization &amp; data retention</h2>
+            <h2 className="text-sm font-semibold text-[var(--color-text)]">Organization and retention</h2>
             <p className="mt-0.5 text-xs text-[var(--color-text-secondary)]">
-              Document retention windows govern how long uploaded resumes are stored per organization.
+              Control organization profile details and resume retention windows.
             </p>
           </div>
           {!isOwner && <StatusTag tone="neutral">Owner read-only</StatusTag>}

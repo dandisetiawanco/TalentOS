@@ -4,7 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { motion } from "motion/react";
+import { ExternalLink } from "lucide-react";
 import {
   APPLICATION_STAGES,
   EMPLOYMENT_TYPE_LABELS,
@@ -93,95 +94,101 @@ export default function WorkspaceJobDetailPage() {
   const job = jobQuery.data;
   const applicants = appsQuery.data || [];
 
+  const tabs = [
+    { id: "overview" as const, label: "Specification" },
+    { id: "applicants" as const, label: `Applicants (${applicants.length})` },
+    { id: "pipeline" as const, label: "Stage breakdown" },
+    ...(canEdit ? [{ id: "edit" as const, label: "Edit role" }] : []),
+  ];
+
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href="/workspace/jobs"
-          className="inline-flex min-h-10 items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to job openings
-        </Link>
-
-        <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusTag tone={jobStatusTone(job.status)}>{job.status}</StatusTag>
-              <StatusTag tone="neutral">{job.department}</StatusTag>
-              <span className="font-mono text-xs text-[var(--color-text-secondary)]">
-                {job.application_count} applications
-              </span>
-            </div>
-            <h1 className="mt-2 text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-              {job.title}
-            </h1>
-            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-              {job.location} · {WORK_ARRANGEMENT_LABELS[job.work_arrangement]} · {EMPLOYMENT_TYPE_LABELS[job.employment_type]}
-            </p>
+      <header className="surface-solid flex flex-col gap-4 rounded-[18px] p-6 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusTag tone={jobStatusTone(job.status)}>{job.status}</StatusTag>
+            <span className="text-xs font-medium text-[var(--color-text-secondary)]">{job.department}</span>
+            <span className="text-xs text-[var(--color-text-secondary)]">·</span>
+            <span className="text-xs tabular-nums text-[var(--color-text-secondary)]">
+              {job.application_count} applications
+            </span>
           </div>
-
-          <div className="flex flex-wrap gap-2">
-            {job.status === "published" && (
-              <Link href={`/careers/${job.slug}`}>
-                <Button variant="secondary" size="sm">
-                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                  Public careers page
-                </Button>
-              </Link>
-            )}
-            <Link href={`/workspace/pipeline?job=${job.id}`}>
-              <Button variant="primary" size="sm">Open in pipeline</Button>
-            </Link>
-          </div>
+          <h1 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+            {job.title}
+          </h1>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+            {job.location} · {WORK_ARRANGEMENT_LABELS[job.work_arrangement]} · {EMPLOYMENT_TYPE_LABELS[job.employment_type]}
+          </p>
         </div>
-      </div>
 
-      <div role="tablist" aria-label="Job detail sections" className="flex flex-wrap gap-2 border-b border-[var(--color-border)] pb-3">
-        {(
-          [
-            { id: "overview", label: "Specification" },
-            { id: "applicants", label: `Applicants (${applicants.length})` },
-            { id: "pipeline", label: "Stage breakdown" },
-            ...(canEdit ? [{ id: "edit", label: "Edit role" }] : []),
-          ] as const
-        ).map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === item.id}
-            onClick={() => setTab(item.id as typeof tab)}
-            className={`min-h-10 rounded-[7px] border px-3.5 text-sm font-medium transition-colors ${
-              tab === item.id
-                ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent-text)]"
-                : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
+        <div className="flex flex-wrap gap-2">
+          {job.status === "published" && (
+            <Link href={`/careers/${job.slug}`}>
+              <Button variant="secondary" size="sm">
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                Public listing
+              </Button>
+            </Link>
+          )}
+          <Link href={`/workspace/pipeline?job=${job.id}`}>
+            <Button variant="primary" size="sm">Open in pipeline</Button>
+          </Link>
+        </div>
+      </header>
+
+      <div
+        role="tablist"
+        aria-label="Job detail sections"
+        className="surface-segment-track inline-flex flex-wrap gap-1 rounded-[12px] p-1"
+      >
+        {tabs.map((item) => {
+          const selected = tab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setTab(item.id)}
+              className={`relative min-h-9 rounded-[9px] px-3.5 text-xs font-medium transition-colors ${
+                selected
+                  ? "text-[var(--color-text)]"
+                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+              }`}
+            >
+              {selected && (
+                <motion.span
+                  layoutId="job-detail-tab-pill"
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  aria-hidden="true"
+                  className="absolute inset-0 rounded-[9px] bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(15,23,21,0.08)] ring-1 ring-[var(--color-border)]"
+                />
+              )}
+              <span className="relative z-10">{item.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {tab === "overview" && (
         <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
-          <div className="space-y-6 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-            <section>
+          <div className="surface-solid divide-y divide-[var(--color-border)] rounded-[18px]">
+            <section className="p-6">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">Role summary</h2>
               <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">{job.description}</p>
             </section>
-            <section>
+            <section className="p-6">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">Required qualifications</h2>
-              <ul className="mt-2 space-y-1.5 text-sm text-[var(--color-text-secondary)]">
+              <ul className="mt-2.5 space-y-2 text-sm text-[var(--color-text-secondary)]">
                 {job.required_qualifications.map((item) => (
                   <li key={item}>• {item}</li>
                 ))}
               </ul>
             </section>
             {job.preferred_qualifications.length > 0 && (
-              <section>
+              <section className="p-6">
                 <h2 className="text-sm font-semibold text-[var(--color-text)]">Preferred qualifications</h2>
-                <ul className="mt-2 space-y-1.5 text-sm text-[var(--color-text-secondary)]">
+                <ul className="mt-2.5 space-y-2 text-sm text-[var(--color-text-secondary)]">
                   {job.preferred_qualifications.map((item) => (
                     <li key={item}>• {item}</li>
                   ))}
@@ -190,12 +197,12 @@ export default function WorkspaceJobDetailPage() {
             )}
           </div>
 
-          <aside className="space-y-4 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-            <h2 className="text-sm font-semibold text-[var(--color-text)]">Hiring metadata</h2>
-            <dl className="space-y-3 text-sm">
+          <aside className="surface-solid space-y-5 rounded-[16px] p-5 self-start">
+            <h2 className="text-sm font-semibold text-[var(--color-text)]">Role details</h2>
+            <dl className="space-y-3.5 text-sm">
               <div>
                 <dt className="text-xs text-[var(--color-text-secondary)]">Compensation</dt>
-                <dd className="mt-0.5 font-mono text-xs text-[var(--color-text)]">
+                <dd className="mt-0.5 text-sm font-medium tabular-nums text-[var(--color-text)]">
                   {formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency)}
                 </dd>
               </div>
@@ -205,20 +212,20 @@ export default function WorkspaceJobDetailPage() {
               </div>
               <div>
                 <dt className="text-xs text-[var(--color-text-secondary)]">Open positions</dt>
-                <dd className="mt-0.5 font-mono text-xs text-[var(--color-text)]">{job.openings_count}</dd>
+                <dd className="mt-0.5 tabular-nums text-[var(--color-text)]">{job.openings_count}</dd>
               </div>
               <div>
                 <dt className="text-xs text-[var(--color-text-secondary)]">Application deadline</dt>
-                <dd className="mt-0.5 font-mono text-xs text-[var(--color-text)]">
+                <dd className="mt-0.5 tabular-nums text-[var(--color-text)]">
                   {formatShortDate(job.application_deadline)}
                 </dd>
               </div>
             </dl>
-            <div>
+            <div className="border-t border-[var(--color-border)] pt-4">
               <p className="text-xs text-[var(--color-text-secondary)]">Required skills</p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {job.required_skills.map((s) => (
-                  <span key={s} className="rounded-[4px] border border-[var(--color-border)] bg-[var(--color-canvas)] px-2 py-0.5 font-mono text-xs">
+                  <span key={s} className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text)]">
                     {s}
                   </span>
                 ))}
@@ -248,11 +255,11 @@ export default function WorkspaceJobDetailPage() {
               </thead>
               <tbody>
                 {applicants.map((app) => (
-                  <tr key={app.id} className="hover:bg-[var(--color-canvas)]">
+                  <tr key={app.id}>
                     <td data-primary="true" data-label="Candidate">
                       <Link
                         href={`/workspace/candidates/${app.candidate_id}`}
-                        className="font-medium text-[var(--color-text)] hover:text-[var(--color-accent)]"
+                        className="font-medium text-[var(--color-text)] transition-colors hover:text-[var(--color-accent)]"
                       >
                         {app.candidate_name}
                       </Link>
@@ -261,15 +268,15 @@ export default function WorkspaceJobDetailPage() {
                     <td data-label="Stage">
                       <StatusTag tone={stageTone(app.stage)}>{STAGE_LABELS[app.stage]}</StatusTag>
                     </td>
-                    <td data-label="Experience" className="font-mono text-xs">
+                    <td data-label="Experience" className="text-xs tabular-nums">
                       {app.candidate_years_experience} years
                     </td>
-                    <td data-label="Evidence check" className="font-mono text-xs text-[var(--color-text-secondary)]">
+                    <td data-label="Evidence check" className="text-xs tabular-nums text-[var(--color-text-secondary)]">
                       {app.evidence_found_count != null && app.required_total_count != null
-                        ? `${app.evidence_found_count}/${app.required_total_count} found`
+                        ? `${app.evidence_found_count} of ${app.required_total_count} criteria`
                         : "Not run yet"}
                     </td>
-                    <td data-label="Applied" className="font-mono text-xs text-[var(--color-text-secondary)]">
+                    <td data-label="Applied" className="text-xs tabular-nums text-[var(--color-text-secondary)]">
                       {formatShortDate(app.applied_at)}
                     </td>
                   </tr>
@@ -285,17 +292,17 @@ export default function WorkspaceJobDetailPage() {
           {APPLICATION_STAGES.map((st) => {
             const list = applicants.filter((a) => a.stage === st);
             return (
-              <div key={st} className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <div key={st} className="surface-solid rounded-[14px] p-4">
                 <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-2">
                   <span className="text-xs font-semibold text-[var(--color-text)]">{STAGE_LABELS[st]}</span>
-                  <span className="font-mono text-xs tabular-nums text-[var(--color-text-secondary)]">{list.length}</span>
+                  <span className="text-xs font-medium tabular-nums text-[var(--color-text-secondary)]">{list.length}</span>
                 </div>
                 <ul className="mt-2.5 space-y-2">
                   {list.length === 0 ? (
                     <li className="text-xs text-[var(--color-text-secondary)]">None</li>
                   ) : (
                     list.map((a) => (
-                      <li key={a.id} className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-2.5">
+                      <li key={a.id} className="rounded-[9px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-2.5">
                         <Link
                           href={`/workspace/candidates/${a.candidate_id}`}
                           className="text-xs font-medium text-[var(--color-text)] hover:text-[var(--color-accent)]"
@@ -318,10 +325,10 @@ export default function WorkspaceJobDetailPage() {
             e.preventDefault();
             updateMutation.mutate();
           }}
-          className="max-w-2xl space-y-4 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6"
+          className="surface-solid max-w-2xl space-y-4 rounded-[16px] p-6"
         >
           {editMessage && (
-            <div className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-accent-soft)] px-3 py-2 text-xs text-[var(--color-accent-text)]">
+            <div className="rounded-[10px] border border-[var(--color-border)] bg-[var(--color-accent-soft)] px-3.5 py-2.5 text-xs text-[var(--color-accent-text)]">
               {editMessage}
             </div>
           )}

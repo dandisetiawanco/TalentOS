@@ -1,82 +1,9 @@
 import Link from "next/link";
-import { Check, ShieldCheck, X } from "lucide-react";
-import { StatusTag } from "@talentos/ui";
+import { ArrowRight, Check, X } from "lucide-react";
 import { PublicHeader } from "@/components/public/public-header";
 import { PublicFooter } from "@/components/public/public-footer";
 import { InteractiveShowcase } from "@/components/public/interactive-showcase";
-
-const CAPABILITY_CHAPTERS = [
-  {
-    index: "01",
-    title: "Structured job architecture",
-    detail:
-      "Draft, review, and publish role specifications with explicit required and preferred criteria. Published roles sync directly to the public careers board with clean validation and duplicate-application checks.",
-    artifact: "Draft -> Published -> Public careers board",
-  },
-  {
-    index: "02",
-    title: "Organized candidate dossier",
-    detail:
-      "Consolidate applications, uploaded resumes, structured skills, interview scorecards, and private internal recruiter notes into one timeline while enforcing strict privacy boundaries for candidate accounts.",
-    artifact: "Private recruiter notes isolated at API and schema level",
-  },
-  {
-    index: "03",
-    title: "Human-led Kanban pipeline",
-    detail:
-      "Move candidates across seven defined stages using pointer drag-and-drop or keyboard controls. Moving to Hired or Rejected always requires an explicit human decision reason and writes an audit record.",
-    artifact: "7 stages with optimistic rollback and audit history",
-  },
-  {
-    index: "04",
-    title: "Interview coordination and rubrics",
-    detail:
-      "Assign hiring panel members, detect overlapping schedules for both interviewers and applicants, download RFC 5545 ICS calendar invitations, and collect structured post-interview feedback.",
-    artifact: "Conflict checks + downloadable .ics invitations",
-  },
-  {
-    index: "05",
-    title: "Evidence-first resume review",
-    detail:
-      "Extract text safely from PDF and DOCX files, flag embedded prompt-injection text, map verbatim document excerpts against job criteria, and fall back to transparent rule-based analysis when no AI key is set.",
-    artifact: "Rule-based default + optional OpenAI / Gemini / Ollama",
-  },
-  {
-    index: "06",
-    title: "Documented recruitment reporting",
-    detail:
-      "Track funnel conversion, stage dwell times, time to hire, and department activity directly from persisted stage transitions with documented metric definitions and one-click CSV export.",
-    artifact: "SQL-backed metrics with zero demographic profiling",
-  },
-];
-
-const WORKFLOW_STEPS = [
-  {
-    num: "1",
-    title: "Publish a job",
-    body: "Define responsibilities, required qualifications, and skills so every reviewer evaluates against shared criteria.",
-  },
-  {
-    num: "2",
-    title: "Receive applications",
-    body: "Candidates apply on the public careers board with resume upload consent and track updates in their own portal.",
-  },
-  {
-    num: "3",
-    title: "Review qualifications",
-    body: "Inspect extracted excerpts side by side with job requirements. Missing evidence is marked not found, never penalized automatically.",
-  },
-  {
-    num: "4",
-    title: "Coordinate interviews",
-    body: "Schedule interviewers without double-booking, share downloadable calendar invites, and log rubric feedback.",
-  },
-  {
-    num: "5",
-    title: "Make human-led hiring decisions",
-    body: "Authorized team members record final hiring or rejection rationale with complete stage audit history.",
-  },
-];
+import { ScrollReveal } from "@/components/public/scroll-reveal";
 
 export default function LandingPage() {
   return (
@@ -84,286 +11,261 @@ export default function LandingPage() {
       <PublicHeader />
 
       <main id="main-content" tabIndex={-1} className="flex-1">
-        {/* Hero section: asymmetric editorial split paired with a real TalentOS interface specimen */}
-        <section className="mx-auto max-w-[1240px] px-4 pt-10 pb-14 sm:px-6 md:pt-16 md:pb-20 lg:px-8">
-          <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_1.15fr] lg:gap-12">
-            <div className="pt-2">
-              <h1 className="text-[clamp(2.25rem,4.8vw,3.5rem)] font-semibold leading-[1.06] tracking-[-0.035em] text-[var(--color-text)]">
-                Hiring, with greater clarity.
-              </h1>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-[var(--color-text-secondary)] sm:text-lg">
-                Manage recruitment workflows, understand candidate qualifications, and bring your hiring
-                team together in one intelligent workspace.
-              </p>
-
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Link
-                  href="/features"
-                  className="inline-flex min-h-12 items-center justify-center rounded-[8px] bg-[var(--color-accent)] px-5 text-sm font-medium text-[var(--color-accent-ink)] hover:bg-[var(--color-accent-hover)] transition-colors"
-                >
-                  Explore the platform
-                </Link>
-                <Link
-                  href="/demo"
-                  className="inline-flex min-h-12 items-center justify-center rounded-[8px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-muted)] transition-colors"
-                >
-                  View live demo
-                </Link>
-              </div>
-
-              <dl className="mt-10 grid grid-cols-3 gap-4 border-t border-[var(--color-border)] pt-6">
-                <div>
-                  <dt className="text-xs text-[var(--color-text-secondary)]">Experiences</dt>
-                  <dd className="mt-1 font-mono text-sm font-medium text-[var(--color-text)]">
-                    Recruiter &amp; Candidate
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs text-[var(--color-text-secondary)]">Analysis mode</dt>
-                  <dd className="mt-1 font-mono text-sm font-medium text-[var(--color-text)]">
-                    Evidence-first
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs text-[var(--color-text-secondary)]">Demo isolation</dt>
-                  <dd className="mt-1 font-mono text-sm font-medium text-[var(--color-text)]">
-                    Per-visitor org
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            {/* Authentic TalentOS interface preview composed from real design-system surfaces */}
-            <div
-              aria-label="TalentOS candidate evaluation workspace preview"
-              className="rounded-[10px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-sm"
-            >
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-medium text-[var(--color-text)]">
-                    workspace / candidates / review
-                  </span>
-                </div>
-                <StatusTag tone="neutral">Synthetic demo record</StatusTag>
-              </div>
-
-              <div className="grid divide-y divide-[var(--color-border)] sm:grid-cols-[0.95fr_1.25fr] sm:divide-x sm:divide-y-0">
-                <div className="p-4">
-                  <p className="text-xs font-medium text-[var(--color-text-secondary)]">Active role</p>
-                  <p className="mt-0.5 text-sm font-semibold text-[var(--color-text)]">
-                    Staff Frontend Engineer
-                  </p>
-                  <p className="mt-0.5 font-mono text-xs text-[var(--color-text-secondary)]">
-                    Engineering · Hybrid · Singapore / APAC
-                  </p>
-
-                  <div className="mt-4 space-y-2">
-                    <p className="text-xs font-medium text-[var(--color-text-secondary)]">
-                      Stage progression
-                    </p>
-                    {[
-                      { label: "Applied", done: true },
-                      { label: "Screening", done: true },
-                      { label: "Shortlisted", done: true },
-                      { label: "Interview", current: true },
-                      { label: "Offer", done: false },
-                    ].map((st) => (
-                      <div
-                        key={st.label}
-                        className={`flex items-center justify-between rounded-[6px] border px-2.5 py-1.5 text-xs ${
-                          st.current
-                            ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] font-medium text-[var(--color-accent-text)]"
-                            : "border-[var(--color-border)] bg-[var(--color-canvas)] text-[var(--color-text-secondary)]"
-                        }`}
-                      >
-                        <span>{st.label}</span>
-                        <span className="font-mono text-[11px]">
-                          {st.current ? "Current" : st.done ? "Verified" : "Pending"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-text)]">Nadia Kusuma</p>
-                      <p className="text-xs text-[var(--color-text-secondary)]">
-                        7 years experience · Jakarta, ID
-                      </p>
-                    </div>
-                    <StatusTag tone="accent">Rule-based check</StatusTag>
-                  </div>
-
-                  <div className="mt-4 space-y-2.5">
-                    <p className="text-xs font-medium text-[var(--color-text-secondary)]">
-                      Qualification evidence from submitted PDF
-                    </p>
-                    <div className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-2.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-medium text-[var(--color-text)]">
-                          Next.js App Router &amp; TypeScript
-                        </span>
-                        <span className="font-mono text-[11px] font-medium text-[var(--color-success)]">
-                          Evidence found
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
-                        &ldquo;Led core initiatives using TypeScript, React, Next.js, Tailwind CSS for enterprise customers.&rdquo;
-                      </p>
-                    </div>
-                    <div className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-2.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-medium text-[var(--color-text)]">
-                          WCAG 2.2 AA &amp; Playwright testing
-                        </span>
-                        <span className="font-mono text-[11px] font-medium text-[var(--color-success)]">
-                          Evidence found
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
-                        &ldquo;Improved automated testing, review standards, and WCAG / security hygiene across releases.&rdquo;
-                      </p>
-                    </div>
-                    <div className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-2.5 text-xs text-[var(--color-text-secondary)]">
-                      Human decision boundary: TalentOS never moves candidates to Hired or Rejected automatically.
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Hero */}
+        <section className="mx-auto max-w-[1160px] px-4 pt-12 pb-10 sm:px-6 md:pt-20 md:pb-14 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="text-[clamp(2.5rem,5.6vw,4.25rem)] font-semibold leading-[1.04] tracking-[-0.04em] text-[var(--color-text)]">
+              A better way to hire.
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[var(--color-text-secondary)] sm:text-[1.125rem]">
+              Bring your hiring team, candidates, and recruitment workflows together in one thoughtful workspace.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="#product"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[11px] bg-[var(--color-accent)] px-5 text-sm font-medium text-[var(--color-accent-ink)] shadow-[0_1px_2px_rgba(15,23,21,0.12)] transition-colors hover:bg-[var(--color-accent-hover)]"
+              >
+                Explore TalentOS
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <Link
+                href="/demo"
+                className="surface-glass-nav inline-flex h-11 items-center justify-center rounded-[11px] px-5 text-sm font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface)]"
+              >
+                Try the demo
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Product Overview: Editorial sticky-index ledger (deliberately not 6 identical cards) */}
-        <section
-          id="product"
-          aria-labelledby="product-overview-heading"
-          className="border-t border-[var(--color-border)] bg-[var(--color-canvas)]"
-        >
-          <div className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6 md:py-20 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.4fr] lg:gap-16">
-              <div className="lg:sticky lg:top-24 lg:self-start">
-                <p className="font-mono text-xs text-[var(--color-text-secondary)]">
-                  01 / Product architecture
-                </p>
+        {/* Main interactive workspace visual */}
+        <section aria-label="Interactive TalentOS workspace preview" className="px-4 pb-16 sm:px-6 md:pb-24 lg:px-8">
+          <InteractiveShowcase />
+        </section>
+
+        {/* Showcase 1: Candidate dossier & Resume insights (Asymmetric editorial spread) */}
+        <section id="product" aria-labelledby="dossier-heading" className="mx-auto max-w-[1160px] px-4 py-14 sm:px-6 md:py-22 lg:px-8">
+          <ScrollReveal>
+            <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.15fr] lg:gap-16">
+              <div>
                 <h2
-                  id="product-overview-heading"
-                  className="mt-2 text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)] sm:text-3xl"
+                  id="dossier-heading"
+                  className="text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)] sm:text-[2rem] sm:leading-[1.15]"
                 >
-                  Six connected modules built on one relational source of truth
+                  Candidate profiles built for careful review.
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-                  Instead of fragmenting job specs, resumes, interview schedules, and funnel metrics
-                  across spreadsheets, TalentOS models every hiring event under organization-scoped
-                  permissions.
+                <p className="mt-4 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
+                  Every resume, application timeline, interview scorecard, and private team note lives in one
+                  structured dossier. Resume insights extract verbatim evidence against published job criteria so
+                  reviewers can verify qualifications directly rather than trusting opaque scores.
                 </p>
-                <div className="mt-6 flex flex-wrap gap-3">
+                <div className="mt-6 grid grid-cols-2 gap-4 border-t border-[var(--color-border)] pt-5">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--color-text)]">Evidence first</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-secondary)]">
+                      Quotes directly from submitted PDF and DOCX resumes.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--color-text)]">Private by default</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-secondary)]">
+                      Internal recruiter notes stay isolated from candidate accounts.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="surface-solid rounded-[18px] p-5 sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-[var(--color-border)]">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--color-text)]">Nadia Kusuma</p>
+                    <p className="text-xs text-[var(--color-text-secondary)]">
+                      Staff Frontend Engineer · 7 years experience · Jakarta
+                    </p>
+                  </div>
+                  <span className="rounded-[8px] bg-[var(--color-accent-soft)] px-2.5 py-1 text-xs font-medium text-[var(--color-accent-text)]">
+                    Interview stage
+                  </span>
+                </div>
+
+                <div className="mt-4 space-y-3">
+                  <div className="rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-[var(--color-text)]">
+                        Production Next.js and TypeScript systems
+                      </span>
+                      <span className="text-xs font-medium text-[var(--color-accent-text)]">Evidence found</span>
+                    </div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-[var(--color-text-secondary)]">
+                      &ldquo;Led core frontend architecture across Next.js App Router, React, and strict TypeScript modules for enterprise teams.&rdquo;
+                    </p>
+                  </div>
+
+                  <div className="rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-[var(--color-text)]">
+                        Accessibility and automated UI verification
+                      </span>
+                      <span className="text-xs font-medium text-[var(--color-accent-text)]">Evidence found</span>
+                    </div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-[var(--color-text-secondary)]">
+                      &ldquo;Established WCAG AA contrast checks, keyboard navigation audits, and Playwright regression suites.&rdquo;
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-[11px] bg-[var(--color-canvas)] px-3.5 py-2.5 text-xs text-[var(--color-text-secondary)]">
+                    <span>Suggested interview follow-up generated separately from extracted facts.</span>
+                    <span className="shrink-0 font-medium text-[var(--color-text)]">Human review</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </section>
+
+        {/* Showcase 2: Pipeline + Interview coordination (Two distinct architectural panels) */}
+        <section aria-labelledby="operations-heading" className="mx-auto max-w-[1160px] px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <ScrollReveal>
+            <div className="max-w-2xl">
+              <h2
+                id="operations-heading"
+                className="text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)] sm:text-[2rem] sm:leading-[1.15]"
+              >
+                Fluid from first application to signed offer.
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
+                Coordinate stages, hiring panels, and candidate communication inside one connected system where every
+                decision leaves a clear history.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-5 lg:grid-cols-12">
+              <div className="surface-solid rounded-[18px] p-6 lg:col-span-7">
+                <h3 className="text-base font-semibold text-[var(--color-text)]">Hiring pipeline</h3>
+                <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
+                  Move candidates smoothly across seven stages with drag-and-drop or keyboard controls. Final Hired and
+                  Rejected decisions always prompt for an explicit human rationale.
+                </p>
+                <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                  {[
+                    { stage: "Applied", count: 14, tone: "bg-[var(--color-text-secondary)]" },
+                    { stage: "Screening", count: 9, tone: "bg-[var(--color-info)]" },
+                    { stage: "Interview", count: 6, tone: "bg-[var(--color-accent)]" },
+                    { stage: "Offer", count: 3, tone: "bg-[var(--color-warning)]" },
+                  ].map((item) => (
+                    <div
+                      key={item.stage}
+                      className="rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-3.5"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className={`h-2 w-2 rounded-full ${item.tone}`} aria-hidden="true" />
+                        <span className="text-xs font-medium text-[var(--color-text-secondary)]">{item.stage}</span>
+                      </div>
+                      <p className="mt-2 text-xl font-semibold tabular-nums text-[var(--color-text)]">{item.count}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="surface-solid rounded-[18px] p-6 lg:col-span-5">
+                <h3 className="text-base font-semibold text-[var(--color-text)]">Interview coordination</h3>
+                <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
+                  Prevent double-booked interviewers, export standard calendar invitations, and collect structured
+                  panel feedback in one view.
+                </p>
+                <div className="mt-5 space-y-2.5">
+                  {[
+                    { title: "Architecture walkthrough", who: "Nadia Kusuma", meta: "45 min · Video · No conflicts" },
+                    { title: "Hiring manager conversation", who: "Raka Pratama", meta: "30 min · ICS ready" },
+                  ].map((event) => (
+                    <div
+                      key={event.title}
+                      className="flex items-center justify-between gap-3 rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] px-3.5 py-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-xs font-semibold text-[var(--color-text)]">{event.title}</p>
+                        <p className="mt-0.5 truncate text-[11px] text-[var(--color-text-secondary)]">{event.who}</p>
+                      </div>
+                      <span className="shrink-0 text-[11px] text-[var(--color-accent-text)]">{event.meta}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </section>
+
+        {/* Showcase 3: Analytics & Candidate portal */}
+        <section aria-labelledby="clarity-heading" className="mx-auto max-w-[1160px] px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+          <ScrollReveal>
+            <div className="grid gap-5 lg:grid-cols-2">
+              <div className="surface-solid rounded-[18px] p-6 sm:p-7">
+                <h2 id="clarity-heading" className="text-lg font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+                  Recruitment analytics grounded in real transitions
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                  Every funnel conversion rate, time-to-hire average, and department metric is computed directly from
+                  persisted stage changes with one-click CSV export and clear metric definitions.
+                </p>
+                <div className="mt-5 flex items-center gap-6 border-t border-[var(--color-border)] pt-4 text-xs">
+                  <div>
+                    <span className="text-[var(--color-text-secondary)]">Role permissions</span>
+                    <p className="mt-0.5 font-medium text-[var(--color-text)]">Organization scoped</p>
+                  </div>
+                  <div>
+                    <span className="text-[var(--color-text-secondary)]">Export format</span>
+                    <p className="mt-0.5 font-medium text-[var(--color-text)]">CSV reporting</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="surface-solid rounded-[18px] p-6 sm:p-7">
+                <h2 className="text-lg font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+                  A calm, dedicated portal for candidates
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                  Applicants browse open positions, apply with explicit document consent, manage resumes, track stage
+                  milestones, and inspect interview details from their own private workspace.
+                </p>
+                <div className="mt-5 border-t border-[var(--color-border)] pt-4">
                   <Link
                     href="/careers"
-                    className="inline-flex min-h-11 items-center rounded-[7px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-4 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-muted)]"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-accent-text)] hover:underline"
                   >
-                    Browse demo careers board
+                    Browse open positions
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
                 </div>
               </div>
-
-              <div className="divide-y divide-[var(--color-border)] border-y border-[var(--color-border)]">
-                {CAPABILITY_CHAPTERS.map((chapter) => (
-                  <article key={chapter.index} className="grid gap-3 py-6 sm:grid-cols-[56px_1fr]">
-                    <span className="font-mono text-xs text-[var(--color-accent-text)] pt-1">
-                      {chapter.index}
-                    </span>
-                    <div>
-                      <h3 className="text-base font-semibold text-[var(--color-text)]">
-                        {chapter.title}
-                      </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-                        {chapter.detail}
-                      </p>
-                      <p className="mt-2.5 font-mono text-xs text-[var(--color-text-secondary)]">
-                        {chapter.artifact}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
-        {/* Interactive Product Showcase powered by real seeded API records */}
-        <InteractiveShowcase />
-
-        {/* Workflow Section: 5 structured stages */}
-        <section aria-labelledby="workflow-heading" className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6 md:py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <p className="font-mono text-xs text-[var(--color-text-secondary)]">
-              03 / Recruitment lifecycle
-            </p>
-            <h2
-              id="workflow-heading"
-              className="mt-2 text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)] sm:text-3xl"
-            >
-              From published opening to documented hiring decision
-            </h2>
-          </div>
-
-          <ol className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            {WORKFLOW_STEPS.map((step) => (
-              <li
-                key={step.num}
-                className="flex flex-col rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
-              >
-                <span className="font-mono text-xs font-semibold text-[var(--color-accent-text)]">
-                  Step 0{step.num}
-                </span>
-                <h3 className="mt-3 text-sm font-semibold text-[var(--color-text)]">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
-                  {step.body}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* Responsible AI Charter */}
-        <section
-          aria-labelledby="responsible-ai-heading"
-          className="border-t border-[var(--color-border)] bg-[var(--color-surface)]"
-        >
-          <div className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+        {/* Human-led AI principles */}
+        <section aria-labelledby="principles-heading" className="mx-auto max-w-[1160px] px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+          <ScrollReveal>
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 font-mono text-xs text-[var(--color-accent-text)]">
-                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                <span>04 / Responsible AI boundaries</span>
-              </div>
               <h2
-                id="responsible-ai-heading"
-                className="mt-2 text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)] sm:text-3xl"
+                id="principles-heading"
+                className="text-2xl font-semibold tracking-[-0.03em] text-[var(--color-text)] sm:text-[1.875rem]"
               >
-                Assistance you can inspect, never opaque automation
+                Assistance you can inspect, decisions people own.
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-secondary)] sm:text-base">
-                Resume analysis in TalentOS is engineered to prepare reviewers faster while keeping
-                every qualification claim verifiable against the submitted document and every hiring
-                call strictly human-owned.
+                TalentOS is designed around transparent, human-led recruitment. Document analysis supports preparation
+                without replacing reviewer judgment.
               </p>
             </div>
 
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-6">
-                <h3 className="text-sm font-semibold text-[var(--color-text)]">
-                  What TalentOS surfaces for reviewers
-                </h3>
+            <div className="mt-8 grid gap-5 md:grid-cols-2">
+              <div className="surface-solid rounded-[16px] p-6">
+                <h3 className="text-sm font-semibold text-[var(--color-text)]">What TalentOS helps you see</h3>
                 <ul className="mt-4 space-y-3 text-sm text-[var(--color-text-secondary)]">
                   {[
-                    "Verbatim text excerpts mapped to published required and preferred qualifications.",
-                    "Clear separation between facts extracted from the resume and suggested interview questions.",
-                    "Explicit disclosure when deterministic rule-based extraction runs instead of an LLM.",
-                    "Prompt-injection warning flags when uploaded documents contain embedded directives.",
-                    "Human review confirmation and reviewer correction logs stored alongside every analysis.",
+                    "Verbatim resume excerpts mapped directly to published role criteria.",
+                    "Clear separation between extracted facts and suggested interview questions.",
+                    "Transparent indication whenever built-in rule analysis runs locally.",
+                    "Prompt-injection warning flags for untrusted uploaded documents.",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-success)]" aria-hidden="true" />
@@ -373,17 +275,14 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <div className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-6">
-                <h3 className="text-sm font-semibold text-[var(--color-text)]">
-                  What TalentOS never infers or automates
-                </h3>
+              <div className="surface-solid rounded-[16px] p-6">
+                <h3 className="text-sm font-semibold text-[var(--color-text)]">What TalentOS never automates</h3>
                 <ul className="mt-4 space-y-3 text-sm text-[var(--color-text-secondary)]">
                   {[
-                    "No automatic rejection, shortlisting, or stage transitions to Hired or Rejected.",
-                    "No demographic inference (age, gender, ethnicity, religion, marital status, or disability).",
-                    "No personality scoring, employability predictions, or universal black-box candidate scores.",
-                    "No interpreting missing resume phrases as proven lack of candidate ability.",
-                    "No sharing internal recruiter notes, private evaluations, or other applicants with candidates.",
+                    "No automatic rejection, shortlisting, or unsupervised stage changes.",
+                    "No demographic inference or black-box personality scoring.",
+                    "No treating unmentioned resume terms as proven lack of skill.",
+                    "No exposing internal team notes or private evaluations to applicants.",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
                       <X className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-error)]" aria-hidden="true" />
@@ -393,36 +292,38 @@ export default function LandingPage() {
                 </ul>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
-        {/* Direct closing action band */}
-        <section className="border-t border-[var(--color-border)] bg-[var(--color-canvas)]">
-          <div className="mx-auto flex max-w-[1240px] flex-col items-start justify-between gap-6 px-4 py-14 sm:px-6 md:flex-row md:items-center lg:px-8">
-            <div className="max-w-xl">
-              <h2 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)] sm:text-2xl">
-                Try all three role experiences with isolated demo data
-              </h2>
-              <p className="mt-2 text-sm text-[var(--color-text-secondary)]">
-                Switch between Recruiter, Hiring Manager, and Candidate views without configuring
-                external API keys or affecting other visitors.
-              </p>
+        {/* Closing Liquid Glass Invitation */}
+        <section className="mx-auto max-w-[1160px] px-4 py-8 sm:px-6 md:py-12 lg:px-8">
+          <ScrollReveal>
+            <div className="surface-glass-nav flex flex-col items-start justify-between gap-6 rounded-[22px] p-7 sm:p-9 md:flex-row md:items-center">
+              <div className="max-w-xl">
+                <h2 className="text-xl font-semibold tracking-[-0.025em] text-[var(--color-text)] sm:text-2xl">
+                  Experience TalentOS across every hiring role.
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                  Explore an isolated workspace seeded with realistic openings, candidates, interviews, and analytics.
+                  No external API keys required.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  href="/demo"
+                  className="inline-flex h-11 items-center rounded-[11px] bg-[var(--color-accent)] px-5 text-sm font-medium text-[var(--color-accent-ink)] shadow-[0_1px_2px_rgba(15,23,21,0.12)] transition-colors hover:bg-[var(--color-accent-hover)]"
+                >
+                  Try the demo
+                </Link>
+                <Link
+                  href="/features"
+                  className="inline-flex h-11 items-center rounded-[11px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-subtle)]"
+                >
+                  Explore features
+                </Link>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/demo"
-                className="inline-flex min-h-11 items-center rounded-[7px] bg-[var(--color-accent)] px-5 text-sm font-medium text-[var(--color-accent-ink)] hover:bg-[var(--color-accent-hover)]"
-              >
-                Open interactive demo
-              </Link>
-              <Link
-                href="/register"
-                className="inline-flex min-h-11 items-center rounded-[7px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-5 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-muted)]"
-              >
-                Create an account
-              </Link>
-            </div>
-          </div>
+          </ScrollReveal>
         </section>
       </main>
 

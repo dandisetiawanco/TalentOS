@@ -17,12 +17,11 @@ export default function CandidateInterviewsPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
+        <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
           Interview invitations
         </h1>
-        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-          View confirmed interview times, preparation notes, and download ICS files to add them to
-          your personal calendar.
+        <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+          Review confirmed interview times, preparation notes, and download ICS files for your personal calendar.
         </p>
       </div>
 
@@ -39,17 +38,17 @@ export default function CandidateInterviewsPage() {
       {data && data.length === 0 && (
         <StatePanel
           title="No interview invitations yet"
-          description="When a hiring team schedules an interview for one of your applications, the invitation will appear here."
+          description="When a hiring team schedules an interview for one of your applications, it will appear here."
         />
       )}
 
       {data && data.length > 0 && (
         <div className="space-y-3">
           {data.map((iv) => (
-            <article key={iv.id} className="rounded-[9px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <article key={iv.id} className="surface-solid rounded-[16px] p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <h2 className="text-base font-semibold text-[var(--color-text)]">{iv.title}</h2>
                     <StatusTag tone={iv.status === "completed" ? "success" : iv.status === "cancelled" ? "error" : "accent"}>
                       {iv.status}
@@ -58,7 +57,7 @@ export default function CandidateInterviewsPage() {
                   <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
                     {iv.job_title} · {iv.organization_name}
                   </p>
-                  <p className="mt-1.5 inline-flex items-center gap-1.5 font-mono text-xs text-[var(--color-text-secondary)]">
+                  <p className="mt-1.5 inline-flex items-center gap-1.5 text-xs tabular-nums text-[var(--color-text-secondary)]">
                     <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                     {formatDateTime(iv.scheduled_start)} · {iv.duration_minutes} minutes ({iv.timezone})
                   </p>

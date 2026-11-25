@@ -4,9 +4,9 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { motion } from "motion/react";
 import {
   AlertTriangle,
-  ArrowLeft,
   CheckCircle2,
   Download,
   FileSearch,
@@ -28,10 +28,16 @@ import {
   formatFileSize,
   formatRelativeTime,
   formatShortDate,
+  initialsFor,
   stageTone,
 } from "@/lib/format";
 
-type CandidateTab = "overview" | "intelligence" | "applications" | "notes" | "activity";
+type CandidateTab = "intelligence" | "overview" | "applications" | "notes" | "activity";
+
+function formatProviderName(provider: string): string {
+  if (provider === "deterministic_rules") return "built-in rule analyzer";
+  return provider.replace(/_/g, " ");
+}
 
 export default function WorkspaceCandidateDetailPage() {
   const params = useParams<{ id: string }>();
@@ -87,8 +93,9 @@ export default function WorkspaceCandidateDetailPage() {
       });
     },
     onSuccess: (res) => {
+      const modeText = res.analysis_mode === "rule_based" ? "rule-based" : "AI-assisted";
       setFeedbackBanner(
-        `Completed ${res.analysis_mode.replace("_", " ")} analysis using ${res.provider_name}. Review each evidence quote below.`
+        `Completed ${modeText} qualification check using ${formatProviderName(res.provider_name)}. Review the evidence quotes below.`
       );
       announce("Resume analysis finished.");
       void queryClient.invalidateQueries({ queryKey: ["workspace-candidate", candidateId] });
@@ -109,7 +116,7 @@ export default function WorkspaceCandidateDetailPage() {
       }),
     onSuccess: () => {
       setReviewNotes("");
-      setFeedbackBanner("Human review verification recorded on this analysis.");
+      setFeedbackBanner("Human review verification recorded on this dossier.");
       announce("Analysis marked as human reviewed.");
       void queryClient.invalidateQueries({ queryKey: ["workspace-candidate", candidateId] });
     },
@@ -130,7 +137,7 @@ export default function WorkspaceCandidateDetailPage() {
         body: formData,
       });
       setSelectedDocId(uploaded.id);
-      setFeedbackBanner(`Uploaded ${uploaded.original_filename}. You can now run qualification analysis.`);
+      setFeedbackBanner(`Uploaded ${uploaded.original_filename}. Ready for qualification review.`);
       void queryClient.invalidateQueries({ queryKey: ["workspace-candidate", candidateId] });
     } catch (err) {
       setFeedbackBanner(err instanceof ApiError ? err.message : "Upload failed.");
@@ -152,37 +159,53 @@ export default function WorkspaceCandidateDetailPage() {
   const latestAnalysis = cand.analyses[0] || null;
   const canUpload = user?.role === "organization_owner" || user?.role === "recruiter";
 
+  const tabs: Array<{ id: CandidateTab; label: string }> = [
+    { id: "intelligence", label: `Resume insights (${cand.analyses.length})` },
+    { id: "overview", label: "Profile and documents" },
+    { id: "applications", label: `Applications (${cand.applications.length})` },
+    { id: "notes", label: `Private notes (${cand.notes.length})` },
+    { id: "activity", label: "Activity" },
+  ];
+
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href="/workspace/candidates"
-          className="inline-flex min-h-10 items-center gap-1.5 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to candidate directory
-        </Link>
-
-        <div className="mt-2 flex flex-col gap-4 rounded-[9px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-5 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-                {cand.full_name}
-              </h1>
-              {cand.applications[0] && (
-                <StatusTag tone={stageTone(cand.applications[0].stage)}>
-                  {STAGE_LABELS[cand.applications[0].stage]}
-                </StatusTag>
+      {/* Digital Dossier Identity Header */}
+      <header className="surface-solid rounded-[18px] p-6">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-4">
+            <span
+              aria-hidden="true"
+              className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[13px] bg-[var(--color-accent-soft)] text-sm font-semibold text-[var(--color-accent-text)]"
+            >
+              {initialsFor(cand.full_name)}
+            </span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+                  {cand.full_name}
+                </h1>
+                {cand.applications[0] && (
+                  <StatusTag tone={stageTone(cand.applications[0].stage)}>
+                    {STAGE_LABELS[cand.applications[0].stage]}
+                  </StatusTag>
+                )}
+              </div>
+              {cand.headline && (
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{cand.headline}</p>
               )}
-            </div>
-            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{cand.headline}</p>
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-[var(--color-text-secondary)]">
-              <span>{cand.email}</span>
-              {cand.location && <span>{cand.location}</span>}
-              <span>{cand.years_of_experience} years experience</span>
-              <span>
-                Consent: {cand.consent_resume_processing ? "Recorded" : "Not granted"}
-              </span>
+              <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-text-secondary)]">
+                <span>{cand.email}</span>
+                {cand.location && (
+                  <>
+                    <span>·</span>
+                    <span>{cand.location}</span>
+                  </>
+                )}
+                <span>·</span>
+                <span className="tabular-nums">{cand.years_of_experience} years experience</span>
+                <span>·</span>
+                <span>Consent {cand.consent_resume_processing ? "recorded" : "not granted"}</span>
+              </div>
             </div>
           </div>
 
@@ -195,128 +218,109 @@ export default function WorkspaceCandidateDetailPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </header>
 
       {feedbackBanner && (
         <div
           role="status"
-          className="rounded-[7px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]"
+          className="rounded-[12px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]"
         >
           {feedbackBanner}
         </div>
       )}
 
-      <div role="tablist" aria-label="Candidate profile sections" className="flex flex-wrap gap-2 border-b border-[var(--color-border)] pb-3">
-        {(
-          [
-            { id: "intelligence", label: `Resume intelligence (${cand.analyses.length})` },
-            { id: "overview", label: "Profile & documents" },
-            { id: "applications", label: `Applications & interviews (${cand.applications.length})` },
-            { id: "notes", label: `Internal notes (${cand.notes.length})` },
-            { id: "activity", label: "Activity timeline" },
-          ] as const
-        ).map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === item.id}
-            onClick={() => setTab(item.id)}
-            className={`min-h-10 rounded-[7px] border px-3.5 text-sm font-medium transition-colors ${
-              tab === item.id
-                ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent-text)]"
-                : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
+      {/* Segmented Dossier Navigation */}
+      <div
+        role="tablist"
+        aria-label="Candidate dossier sections"
+        className="surface-segment-track inline-flex max-w-full flex-wrap gap-1 rounded-[12px] p-1"
+      >
+        {tabs.map((item) => {
+          const selected = tab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setTab(item.id)}
+              className={`relative min-h-9 rounded-[9px] px-3.5 text-xs font-medium transition-colors ${
+                selected
+                  ? "text-[var(--color-text)]"
+                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+              }`}
+            >
+              {selected && (
+                <motion.span
+                  layoutId="dossier-tab-pill"
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  aria-hidden="true"
+                  className="absolute inset-0 rounded-[9px] bg-[var(--color-surface)] shadow-[0_1px_2px_rgba(15,23,21,0.08)] ring-1 ring-[var(--color-border)]"
+                />
+              )}
+              <span className="relative z-10">{item.label}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Tab: Resume Intelligence */}
+      {/* Tab: Resume Insights */}
       {tab === "intelligence" && (
         <div className="space-y-5">
-          <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <h2 className="text-sm font-semibold text-[var(--color-text)]">
-                  Run evidence-based qualification check
-                </h2>
-                <p className="mt-0.5 text-xs text-[var(--color-text-secondary)]">
-                  Compares submitted document text directly against the selected job opening&apos;s
-                  published criteria. Missing phrases are labeled Not found, never auto-rejected.
-                </p>
+          {/* Compact analysis run bar */}
+          <section className="surface-solid flex flex-col gap-4 rounded-[16px] p-5 xl:flex-row xl:items-end xl:justify-between">
+            <div className="max-w-md">
+              <h2 className="text-sm font-semibold text-[var(--color-text)]">
+                Qualification evidence check
+              </h2>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-secondary)]">
+                Compares submitted resume text directly against published role criteria. Unmentioned items stay marked
+                Not found and are never auto-rejected.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-end gap-2.5 xl:flex-nowrap">
+              <div className="min-w-44">
+                <label htmlFor="an-doc" className="block text-xs text-[var(--color-text-secondary)]">Document</label>
+                <Select id="an-doc" value={selectedDocId} onChange={(e) => setSelectedDocId(e.target.value)} className="mt-1 min-h-9 text-xs">
+                  {cand.documents.length === 0 && <option value="">No document uploaded</option>}
+                  {cand.documents.map((doc) => (
+                    <option key={doc.id} value={doc.id}>{doc.original_filename}</option>
+                  ))}
+                </Select>
               </div>
-              <div className="flex flex-wrap items-end gap-2.5">
-                <div className="min-w-44">
-                  <label htmlFor="an-doc" className="block text-xs text-[var(--color-text-secondary)]">Document</label>
-                  <Select id="an-doc" value={selectedDocId} onChange={(e) => setSelectedDocId(e.target.value)} className="mt-1 min-h-10 text-xs">
-                    {cand.documents.length === 0 && <option value="">No document uploaded</option>}
-                    {cand.documents.map((doc) => (
-                      <option key={doc.id} value={doc.id}>{doc.original_filename}</option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="min-w-48">
-                  <label htmlFor="an-app" className="block text-xs text-[var(--color-text-secondary)]">Compare against role</label>
-                  <Select id="an-app" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} className="mt-1 min-h-10 text-xs">
-                    <option value="">General extraction only</option>
-                    {cand.applications.map((app) => (
-                      <option key={app.id} value={app.id}>{app.job_title}</option>
-                    ))}
-                  </Select>
-                </div>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  disabled={!selectedDocId || analyzeMutation.isPending}
-                  onClick={() => analyzeMutation.mutate()}
-                >
-                  <FileSearch className="h-4 w-4" aria-hidden="true" />
-                  {analyzeMutation.isPending ? "Analyzing..." : "Analyze resume"}
-                </Button>
+              <div className="min-w-48">
+                <label htmlFor="an-app" className="block text-xs text-[var(--color-text-secondary)]">Compare with role</label>
+                <Select id="an-app" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} className="mt-1 min-h-9 text-xs">
+                  <option value="">General extraction only</option>
+                  {cand.applications.map((app) => (
+                    <option key={app.id} value={app.id}>{app.job_title}</option>
+                  ))}
+                </Select>
               </div>
+              <Button
+                variant="primary"
+                size="sm"
+                className="shrink-0"
+                disabled={!selectedDocId || analyzeMutation.isPending}
+                onClick={() => analyzeMutation.mutate()}
+              >
+                <FileSearch className="h-3.5 w-3.5" aria-hidden="true" />
+                {analyzeMutation.isPending ? "Analyzing..." : "Analyze resume"}
+              </Button>
             </div>
           </section>
 
           {!latestAnalysis ? (
             <StatePanel
               title="No resume analysis recorded yet"
-              description="Select a submitted PDF or DOCX document above to extract structured qualifications and verbatim evidence."
+              description="Select a submitted PDF or DOCX resume above to extract structured qualifications and verbatim evidence."
             />
           ) : (
             <div className="space-y-5">
-              {/* Header & Mode Disclosure */}
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <StatusTag tone={latestAnalysis.analysis_mode === "rule_based" ? "neutral" : "accent"}>
-                    {latestAnalysis.analysis_mode === "rule_based"
-                      ? "Rule-based deterministic analysis"
-                      : `AI-assisted (${latestAnalysis.provider_name})`}
-                  </StatusTag>
-                  {latestAnalysis.human_reviewed ? (
-                    <StatusTag tone="success">
-                      <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
-                      Verified by {latestAnalysis.reviewed_by_name}
-                    </StatusTag>
-                  ) : (
-                    <StatusTag tone="warning">Pending human review</StatusTag>
-                  )}
-                  {latestAnalysis.job_title && (
-                    <span className="font-mono text-xs text-[var(--color-text-secondary)]">
-                      Target role: {latestAnalysis.job_title}
-                    </span>
-                  )}
-                </div>
-                <span className="font-mono text-xs text-[var(--color-text-secondary)]">
-                  Ran {formatDateTime(latestAnalysis.created_at)}
-                </span>
-              </div>
-
               {latestAnalysis.prompt_injection_flags.length > 0 && (
                 <div
                   role="alert"
-                  className="flex items-start gap-3 rounded-[8px] border border-[var(--color-warning)] bg-[var(--color-warning-soft)] p-4 text-sm text-[var(--color-warning)]"
+                  className="flex items-start gap-3 rounded-[14px] border border-[var(--color-warning)] bg-[var(--color-warning-soft)] p-4 text-sm text-[var(--color-warning)]"
                 >
                   <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                   <div>
@@ -330,12 +334,36 @@ export default function WorkspaceCandidateDetailPage() {
                 </div>
               )}
 
-              <div className="grid gap-5 lg:grid-cols-[1.25fr_1fr]">
-                {/* Left: Extracted facts vs job criteria evidence */}
-                <div className="space-y-5">
-                  <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+              <div className="grid gap-6 lg:grid-cols-[1.3fr_0.95fr]">
+                {/* Left Editorial Dossier Sheet (uncluttered, avoids nested cards) */}
+                <article className="surface-solid divide-y divide-[var(--color-border)] rounded-[18px]">
+                  {/* Metadata header */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 px-6 py-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <StatusTag tone={latestAnalysis.analysis_mode === "rule_based" ? "neutral" : "accent"}>
+                        {latestAnalysis.analysis_mode === "rule_based"
+                          ? "Rule-based review"
+                          : `AI-assisted (${formatProviderName(latestAnalysis.provider_name)})`}
+                      </StatusTag>
+                      {latestAnalysis.human_reviewed ? (
+                        <StatusTag tone="success">
+                          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          Verified by {latestAnalysis.reviewed_by_name}
+                        </StatusTag>
+                      ) : (
+                        <StatusTag tone="warning">Awaiting human review</StatusTag>
+                      )}
+                    </div>
+                    <span className="text-xs tabular-nums text-[var(--color-text-secondary)]">
+                      {latestAnalysis.job_title ? `${latestAnalysis.job_title} · ` : ""}
+                      {formatDateTime(latestAnalysis.created_at)}
+                    </span>
+                  </div>
+
+                  {/* Extracted summary & skills */}
+                  <section className="px-6 py-5">
                     <h3 className="text-sm font-semibold text-[var(--color-text)]">
-                      Extracted from submitted document
+                      Extracted from submitted resume
                     </h3>
                     <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
                       {latestAnalysis.structured_output.qualification_coverage_summary}
@@ -344,44 +372,48 @@ export default function WorkspaceCandidateDetailPage() {
                       {latestAnalysis.structured_output.professional_summary}
                     </p>
 
-                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
                       <div>
-                        <p className="text-xs font-medium text-[var(--color-text-secondary)]">Technical skills extracted</p>
-                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        <p className="text-xs font-medium text-[var(--color-text-secondary)]">Technical skills</p>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
                           {latestAnalysis.structured_output.extracted_technical_skills.map((s) => (
-                            <span key={s} className="rounded-[4px] border border-[var(--color-border)] bg-[var(--color-canvas)] px-2 py-0.5 font-mono text-xs">
+                            <span
+                              key={s}
+                              className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] px-2.5 py-0.5 text-xs font-medium text-[var(--color-text)]"
+                            >
                               {s}
                             </span>
                           ))}
                         </div>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-[var(--color-text-secondary)]">Professional skills extracted</p>
-                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        <p className="text-xs font-medium text-[var(--color-text-secondary)]">Professional skills</p>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
                           {latestAnalysis.structured_output.extracted_professional_skills.length > 0 ? (
                             latestAnalysis.structured_output.extracted_professional_skills.map((s) => (
-                              <span key={s} className="rounded-[4px] border border-[var(--color-border)] bg-[var(--color-canvas)] px-2 py-0.5 text-xs">
+                              <span
+                                key={s}
+                                className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] px-2.5 py-0.5 text-xs text-[var(--color-text)]"
+                              >
                                 {s}
                               </span>
                             ))
                           ) : (
-                            <span className="text-xs text-[var(--color-text-secondary)]">None explicitly named</span>
+                            <span className="text-xs text-[var(--color-text-secondary)]">None explicitly listed</span>
                           )}
                         </div>
                       </div>
                     </div>
                   </section>
 
-                  <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                  {/* Required qualifications evidence */}
+                  <section className="px-6 py-5">
                     <h3 className="text-sm font-semibold text-[var(--color-text)]">
                       Required qualifications evidence
                     </h3>
-                    <ul className="mt-3 space-y-2.5">
+                    <ul className="mt-3 divide-y divide-[var(--color-border)]">
                       {latestAnalysis.structured_output.required_qualifications_evidence.map((ev) => (
-                        <li
-                          key={ev.criterion}
-                          className="rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-3.5"
-                        >
+                        <li key={ev.criterion} className="py-3.5 first:pt-1 last:pb-0">
                           <div className="flex items-start justify-between gap-3">
                             <p className="text-sm font-medium text-[var(--color-text)]">{ev.criterion}</p>
                             <StatusTag
@@ -394,14 +426,14 @@ export default function WorkspaceCandidateDetailPage() {
                               }
                             >
                               {ev.status === "evidence_found"
-                                ? "Evidence found"
+                                ? "Found"
                                 : ev.status === "ambiguous"
-                                ? "Ambiguous"
+                                ? "Verify"
                                 : "Not found"}
                             </StatusTag>
                           </div>
                           {ev.evidence_excerpt && (
-                            <blockquote className="mt-2 border-l-2 border-[var(--color-accent)] pl-3 text-xs text-[var(--color-text)]">
+                            <blockquote className="mt-2 border-l-2 border-[var(--color-accent)] pl-3 text-xs leading-relaxed text-[var(--color-text-secondary)]">
                               {ev.evidence_excerpt}
                             </blockquote>
                           )}
@@ -413,16 +445,13 @@ export default function WorkspaceCandidateDetailPage() {
                     </ul>
 
                     {latestAnalysis.structured_output.preferred_qualifications_evidence.length > 0 && (
-                      <>
-                        <h4 className="mt-5 text-xs font-semibold text-[var(--color-text)]">
-                          Preferred qualifications evidence
+                      <div className="mt-6 border-t border-[var(--color-border)] pt-5">
+                        <h4 className="text-xs font-semibold text-[var(--color-text)]">
+                          Preferred qualifications
                         </h4>
-                        <ul className="mt-2 space-y-2">
+                        <ul className="mt-2.5 divide-y divide-[var(--color-border)]">
                           {latestAnalysis.structured_output.preferred_qualifications_evidence.map((ev) => (
-                            <li
-                              key={ev.criterion}
-                              className="flex items-center justify-between gap-3 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-canvas)] px-3 py-2 text-xs"
-                            >
+                            <li key={ev.criterion} className="flex items-center justify-between gap-3 py-2.5 text-xs">
                               <span className="text-[var(--color-text)]">{ev.criterion}</span>
                               <StatusTag tone={ev.status === "evidence_found" ? "success" : "neutral"}>
                                 {ev.status === "evidence_found" ? "Found" : ev.status === "ambiguous" ? "Verify" : "Not found"}
@@ -430,64 +459,68 @@ export default function WorkspaceCandidateDetailPage() {
                             </li>
                           ))}
                         </ul>
-                      </>
+                      </div>
                     )}
                   </section>
-                </div>
+                </article>
 
-                {/* Right: Suggestions, limitations, and human review sign-off */}
+                {/* Right Column: Reviewer guidance, limitations, and human verification */}
                 <div className="space-y-5">
-                  <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+                  <section className="surface-solid rounded-[16px] p-5">
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="text-sm font-semibold text-[var(--color-text)]">
                         Suggested interview questions
                       </h3>
-                      <StatusTag tone="neutral">Suggestion</StatusTag>
+                      <span className="text-[11px] font-medium text-[var(--color-text-secondary)]">
+                        Reviewer aid
+                      </span>
                     </div>
-                    <ol className="mt-3 list-decimal space-y-2 pl-4 text-sm text-[var(--color-text-secondary)]">
+                    <ol className="mt-3 list-decimal space-y-2.5 pl-4 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                       {latestAnalysis.structured_output.suggested_interview_questions.map((q) => (
                         <li key={q}>{q}</li>
                       ))}
                     </ol>
                   </section>
 
-                  {latestAnalysis.structured_output.uncertain_or_ambiguous.length > 0 && (
-                    <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-                      <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-text)]">
-                        <AlertTriangle className="h-4 w-4 text-[var(--color-warning)]" aria-hidden="true" />
-                        Uncertain or ambiguous details
+                  <section className="surface-solid divide-y divide-[var(--color-border)] rounded-[16px]">
+                    {latestAnalysis.structured_output.uncertain_or_ambiguous.length > 0 && (
+                      <div className="p-5">
+                        <h3 className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-text)]">
+                          <AlertTriangle className="h-4 w-4 text-[var(--color-warning)]" aria-hidden="true" />
+                          Details to verify in conversation
+                        </h3>
+                        <ul className="mt-2.5 space-y-1.5 text-xs leading-relaxed text-[var(--color-text-secondary)]">
+                          {latestAnalysis.structured_output.uncertain_or_ambiguous.map((u) => (
+                            <li key={u}>• {u}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="p-5">
+                      <h3 className="text-sm font-semibold text-[var(--color-text)]">
+                        Scope and limitations
                       </h3>
-                      <ul className="mt-2 space-y-1.5 text-xs text-[var(--color-text-secondary)]">
-                        {latestAnalysis.structured_output.uncertain_or_ambiguous.map((u) => (
-                          <li key={u}>• {u}</li>
+                      <ul className="mt-2.5 space-y-1.5 text-xs leading-relaxed text-[var(--color-text-secondary)]">
+                        {latestAnalysis.structured_output.analysis_limitations.map((lim) => (
+                          <li key={lim}>• {lim}</li>
                         ))}
                       </ul>
-                    </section>
-                  )}
-
-                  <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-                    <h3 className="text-sm font-semibold text-[var(--color-text)]">
-                      Analysis limitations
-                    </h3>
-                    <ul className="mt-2 space-y-1.5 text-xs text-[var(--color-text-secondary)]">
-                      {latestAnalysis.structured_output.analysis_limitations.map((lim) => (
-                        <li key={lim}>• {lim}</li>
-                      ))}
-                    </ul>
+                    </div>
                   </section>
 
-                  <section className="rounded-[8px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-5">
+                  <section className="surface-solid rounded-[16px] p-5">
                     <h3 className="text-sm font-semibold text-[var(--color-text)]">
                       Human reviewer verification
                     </h3>
                     <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
-                      Confirm you have inspected the source resume and log any corrections.
+                      Confirm you inspected the source resume and log any corrections.
                     </p>
                     <Textarea
                       rows={3}
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
-                      placeholder="Optional reviewer note or skill correction..."
+                      placeholder="Optional verification note or correction..."
                       className="mt-3"
                     />
                     <div className="mt-3 flex justify-end">
@@ -497,7 +530,7 @@ export default function WorkspaceCandidateDetailPage() {
                         disabled={reviewMutation.isPending}
                         onClick={() => reviewMutation.mutate(latestAnalysis.id)}
                       >
-                        {reviewMutation.isPending ? "Saving review..." : "Mark as human reviewed"}
+                        {reviewMutation.isPending ? "Saving..." : "Mark as human reviewed"}
                       </Button>
                     </div>
                   </section>
@@ -508,29 +541,31 @@ export default function WorkspaceCandidateDetailPage() {
         </div>
       )}
 
-      {/* Tab: Profile & Documents */}
+      {/* Tab: Profile and Documents */}
       {tab === "overview" && (
-        <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
-          <div className="space-y-5 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-            <section>
+        <div className="grid gap-6 lg:grid-cols-[1.25fr_0.95fr]">
+          <article className="surface-solid divide-y divide-[var(--color-border)] rounded-[18px]">
+            <section className="p-6">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">Professional summary</h2>
               <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 {cand.professional_summary || "No summary provided."}
               </p>
             </section>
-            <section>
-              <h2 className="text-sm font-semibold text-[var(--color-text)]">Work experience</h2>
-              <div className="mt-2 space-y-3">
+            <section className="p-6">
+              <h2 className="text-sm font-semibold text-[var(--color-text)]">Experience history</h2>
+              <div className="mt-4 space-y-5">
                 {cand.work_experience.map((exp, idx) => (
-                  <div key={idx} className="rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-3.5">
-                    <p className="text-sm font-medium text-[var(--color-text)]">
-                      {exp.role} · {exp.company}
-                    </p>
-                    <p className="font-mono text-xs text-[var(--color-text-secondary)]">
-                      {exp.start_date} to {exp.end_date || "Present"}
-                    </p>
+                  <div key={idx} className="border-l-2 border-[var(--color-border-strong)] pl-4">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <p className="text-sm font-semibold text-[var(--color-text)]">
+                        {exp.role} · {exp.company}
+                      </p>
+                      <span className="text-xs tabular-nums text-[var(--color-text-secondary)]">
+                        {exp.start_date} to {exp.end_date || "Present"}
+                      </span>
+                    </div>
                     {exp.highlights && (
-                      <ul className="mt-2 space-y-1 text-xs text-[var(--color-text-secondary)]">
+                      <ul className="mt-2 space-y-1 text-xs leading-relaxed text-[var(--color-text-secondary)]">
                         {exp.highlights.map((h) => <li key={h}>• {h}</li>)}
                       </ul>
                     )}
@@ -538,9 +573,9 @@ export default function WorkspaceCandidateDetailPage() {
                 ))}
               </div>
             </section>
-            <section>
+            <section className="p-6">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">Education</h2>
-              <ul className="mt-2 space-y-1.5 text-sm text-[var(--color-text-secondary)]">
+              <ul className="mt-3 space-y-2 text-sm text-[var(--color-text-secondary)]">
                 {cand.education.map((ed, idx) => (
                   <li key={idx}>
                     <strong className="font-medium text-[var(--color-text)]">{ed.degree}</strong>, {ed.institution}{" "}
@@ -549,20 +584,20 @@ export default function WorkspaceCandidateDetailPage() {
                 ))}
               </ul>
             </section>
-          </div>
+          </article>
 
-          <div className="space-y-5">
-            <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <aside className="space-y-5">
+            <section className="surface-solid rounded-[16px] p-5">
               <h2 className="text-sm font-semibold text-[var(--color-text)]">Uploaded documents</h2>
               <p className="mt-0.5 text-xs text-[var(--color-text-secondary)]">
-                Stored privately and served through expiring signed download links.
+                Stored privately and served via expiring signed links.
               </p>
-              <ul className="mt-3 divide-y divide-[var(--color-border)]">
+              <ul className="mt-3 divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">
                 {cand.documents.map((doc) => (
-                  <li key={doc.id} className="flex items-center justify-between gap-2 py-2.5">
+                  <li key={doc.id} className="flex items-center justify-between gap-2 py-3">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-[var(--color-text)]">{doc.original_filename}</p>
-                      <p className="font-mono text-xs text-[var(--color-text-secondary)]">
+                      <p className="text-xs tabular-nums text-[var(--color-text-secondary)]">
                         {formatFileSize(doc.file_size_bytes)} · {formatShortDate(doc.created_at)}
                       </p>
                     </div>
@@ -581,7 +616,7 @@ export default function WorkspaceCandidateDetailPage() {
               </ul>
 
               {canUpload && (
-                <div className="mt-4 rounded-[7px] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-canvas)] p-3.5">
+                <div className="mt-4 rounded-[12px] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface-subtle)] p-4">
                   <label className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
                     <input
                       type="checkbox"
@@ -590,7 +625,7 @@ export default function WorkspaceCandidateDetailPage() {
                     />
                     Candidate consent recorded for resume processing
                   </label>
-                  <label className="mt-2.5 inline-flex items-center gap-2 text-xs font-medium text-[var(--color-accent-text)]">
+                  <label className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-[var(--color-accent-text)]">
                     <Upload className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Upload PDF or DOCX resume (max 5 MB)</span>
                     <input type="file" accept=".pdf,.docx" onChange={handleUpload} className="sr-only" />
@@ -598,50 +633,55 @@ export default function WorkspaceCandidateDetailPage() {
                 </div>
               )}
             </section>
-          </div>
+          </aside>
         </div>
       )}
 
-      {/* Tab: Applications & Interviews */}
+      {/* Tab: Applications and Interviews */}
       {tab === "applications" && (
         <div className="grid gap-5 lg:grid-cols-2">
-          <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <section className="surface-solid rounded-[16px] p-5">
             <h2 className="text-sm font-semibold text-[var(--color-text)]">Applications</h2>
-            <ul className="mt-3 space-y-3">
+            <ul className="mt-3 divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">
               {cand.applications.map((app) => (
-                <li key={app.id} className="rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-4">
+                <li key={app.id} className="py-3.5">
                   <div className="flex items-center justify-between gap-2">
-                    <Link href={`/workspace/jobs/${app.job_id}`} className="text-sm font-semibold text-[var(--color-text)] hover:text-[var(--color-accent)]">
+                    <Link
+                      href={`/workspace/jobs/${app.job_id}`}
+                      className="text-sm font-semibold text-[var(--color-text)] hover:text-[var(--color-accent)]"
+                    >
                       {app.job_title}
                     </Link>
                     <StatusTag tone={stageTone(app.stage)}>{STAGE_LABELS[app.stage]}</StatusTag>
                   </div>
-                  <p className="mt-1 font-mono text-xs text-[var(--color-text-secondary)]">
+                  <p className="mt-1 text-xs tabular-nums text-[var(--color-text-secondary)]">
                     Applied {formatShortDate(app.applied_at)} · Source: {app.source}
                   </p>
                   {app.decision_reason && (
-                    <p className="mt-2 text-xs text-[var(--color-text)]">Decision rationale: {app.decision_reason}</p>
+                    <p className="mt-2 text-xs text-[var(--color-text)]">Rationale: {app.decision_reason}</p>
                   )}
                 </li>
               ))}
             </ul>
           </section>
 
-          <section className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          <section className="surface-solid rounded-[16px] p-5">
             <h2 className="text-sm font-semibold text-[var(--color-text)]">Interview history</h2>
             {cand.interviews.length === 0 ? (
-              <p className="mt-3 text-sm text-[var(--color-text-secondary)]">No interviews scheduled for this candidate yet.</p>
+              <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+                No interviews scheduled for this candidate yet.
+              </p>
             ) : (
-              <ul className="mt-3 space-y-3">
+              <ul className="mt-3 divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">
                 {cand.interviews.map((iv) => (
-                  <li key={iv.id} className="rounded-[7px] border border-[var(--color-border)] bg-[var(--color-canvas)] p-4">
+                  <li key={iv.id} className="py-3.5">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-sm font-medium text-[var(--color-text)]">{iv.title}</p>
                       <StatusTag tone={iv.status === "completed" ? "success" : "accent"}>{iv.status}</StatusTag>
                     </div>
                     <p className="mt-1 text-xs text-[var(--color-text-secondary)]">{iv.job_title}</p>
-                    <p className="mt-1 font-mono text-xs text-[var(--color-text-secondary)]">
-                      {formatDateTime(iv.scheduled_start)} ({iv.duration_minutes} min)
+                    <p className="mt-1 text-xs tabular-nums text-[var(--color-text-secondary)]">
+                      {formatDateTime(iv.scheduled_start)} · {iv.duration_minutes} min
                     </p>
                   </li>
                 ))}
@@ -651,12 +691,12 @@ export default function WorkspaceCandidateDetailPage() {
         </div>
       )}
 
-      {/* Tab: Private Internal Recruiter Notes */}
+      {/* Tab: Private Notes */}
       {tab === "notes" && (
         <div className="max-w-3xl space-y-4">
-          <div className="flex items-center gap-2 rounded-[7px] border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3.5 py-2.5 text-xs text-[var(--color-text-secondary)]">
+          <div className="flex items-center gap-2.5 rounded-[12px] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] px-4 py-3 text-xs text-[var(--color-text-secondary)]">
             <Lock className="h-3.5 w-3.5 shrink-0 text-[var(--color-text)]" aria-hidden="true" />
-            <span>Internal notes are visible strictly to authorized members of your organization and are never exposed to candidates.</span>
+            <span>Private notes stay visible strictly to your hiring team and are never exposed to candidates.</span>
           </div>
 
           <form
@@ -664,34 +704,36 @@ export default function WorkspaceCandidateDetailPage() {
               e.preventDefault();
               if (noteContent.trim().length >= 2) noteMutation.mutate();
             }}
-            className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+            className="surface-solid rounded-[16px] p-5"
           >
             <label htmlFor="recruiter-note-input" className="block text-xs font-medium text-[var(--color-text)]">
-              Add internal hiring note
+              Add private note
             </label>
             <Textarea
               id="recruiter-note-input"
               rows={3}
               value={noteContent}
               onChange={(e) => setNoteContent(e.target.value)}
-              placeholder="Record screening context, team alignment, or follow-up questions..."
+              placeholder="Record screening context, panel alignment, or follow-up questions..."
               className="mt-1.5"
             />
             <div className="mt-3 flex justify-end">
               <Button type="submit" variant="primary" size="sm" disabled={noteMutation.isPending || noteContent.trim().length < 2}>
-                {noteMutation.isPending ? "Saving..." : "Save private note"}
+                {noteMutation.isPending ? "Saving..." : "Save note"}
               </Button>
             </div>
           </form>
 
           <ul className="space-y-3">
             {cand.notes.map((n) => (
-              <li key={n.id} className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <li key={n.id} className="surface-solid rounded-[14px] p-4">
                 <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)]">
                   <span className="font-medium text-[var(--color-text)]">{n.author_name}</span>
-                  <span className="font-mono">{formatRelativeTime(n.created_at)}</span>
+                  <span className="tabular-nums">{formatRelativeTime(n.created_at)}</span>
                 </div>
-                <p className="mt-2 whitespace-pre-line text-sm text-[var(--color-text-secondary)]">{n.content}</p>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-[var(--color-text-secondary)]">
+                  {n.content}
+                </p>
               </li>
             ))}
           </ul>
@@ -700,16 +742,16 @@ export default function WorkspaceCandidateDetailPage() {
 
       {/* Tab: Activity Timeline */}
       {tab === "activity" && (
-        <div className="max-w-3xl rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-          <h2 className="text-sm font-semibold text-[var(--color-text)]">Audit timeline</h2>
+        <div className="surface-solid max-w-3xl rounded-[16px] p-5">
+          <h2 className="text-sm font-semibold text-[var(--color-text)]">Activity history</h2>
           {cand.activity.length === 0 ? (
             <p className="mt-3 text-sm text-[var(--color-text-secondary)]">No activity recorded yet.</p>
           ) : (
-            <ul className="mt-3 divide-y divide-[var(--color-border)]">
+            <ul className="mt-3 divide-y divide-[var(--color-border)] border-t border-[var(--color-border)]">
               {cand.activity.map((ev) => (
-                <li key={ev.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                <li key={ev.id} className="flex items-center justify-between gap-3 py-3 text-sm">
                   <span className="text-[var(--color-text)]">{ev.summary}</span>
-                  <span className="shrink-0 font-mono text-xs text-[var(--color-text-secondary)]">
+                  <span className="shrink-0 text-xs tabular-nums text-[var(--color-text-secondary)]">
                     {formatRelativeTime(ev.created_at)}
                   </span>
                 </li>

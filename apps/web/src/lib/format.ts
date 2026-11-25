@@ -91,8 +91,14 @@ export function jobStatusTone(status: string): "neutral" | "accent" | "success" 
 }
 
 export function initialsFor(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
+  const cleaned = name.replace(/\([^)]*\)/g, " ");
+  const parts = cleaned
+    .trim()
+    .split(/\s+/)
+    .map((p) => p.replace(/[^a-zA-Z0-9]/g, ""))
+    .filter(Boolean);
   if (parts.length === 0) return "?";
   if (parts.length === 1) return (parts[0]?.slice(0, 2) || "?").toUpperCase();
-  return `${parts[0]?.[0] || ""}${parts[parts.length - 1]?.[0] || ""}`.toUpperCase();
+  if (parts.length === 2) return `${parts[0]?.[0] || ""}${parts[1]?.[0] || ""}`.toUpperCase();
+  return `${parts[0]?.[0] || ""}${parts[1]?.[0] || ""}`.toUpperCase();
 }

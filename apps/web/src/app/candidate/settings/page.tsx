@@ -49,28 +49,32 @@ export default function CandidateSettingsPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
-          Account and privacy settings
+        <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
+          Settings
         </h1>
-        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-          Control theme preference, application alerts, and personal data deletion.
+        <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+          Control appearance, application updates, and personal data deletion.
         </p>
       </div>
 
       {statusMsg && (
-        <div role="status" className="rounded-[7px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]">
+        <div role="status" className="rounded-[12px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-accent-text)]">
           {statusMsg}
         </div>
       )}
       {errorMsg && (
-        <div role="alert" className="rounded-[7px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-4 py-3 text-sm text-[var(--color-error)]">
+        <div role="alert" className="rounded-[12px] border border-[var(--color-error)] bg-[var(--color-error-soft)] px-4 py-3 text-sm text-[var(--color-error)]">
           {errorMsg}
         </div>
       )}
 
-      <section className="rounded-[9px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <h2 className="text-base font-semibold text-[var(--color-text)]">Color theme</h2>
-        <div role="radiogroup" aria-label="Color theme" className="mt-3 grid grid-cols-3 gap-2.5">
+      <section className="surface-solid rounded-[16px] p-6">
+        <h2 className="text-sm font-semibold text-[var(--color-text)]">Appearance</h2>
+        <div
+          role="radiogroup"
+          aria-label="Color theme"
+          className="surface-segment-track mt-3.5 grid grid-cols-3 gap-1.5 rounded-[12px] p-1"
+        >
           {(
             [
               { value: "system", label: "System" },
@@ -84,10 +88,10 @@ export default function CandidateSettingsPage() {
               role="radio"
               aria-checked={theme === opt.value}
               onClick={() => setTheme(opt.value)}
-              className={`min-h-11 rounded-[7px] border px-3 text-sm font-medium ${
+              className={`min-h-9 rounded-[9px] px-3 text-sm font-medium transition-all ${
                 theme === opt.value
-                  ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent-text)]"
-                  : "border-[var(--color-border-strong)] bg-[var(--color-canvas)] text-[var(--color-text)]"
+                  ? "bg-[var(--color-surface)] text-[var(--color-text)] shadow-[0_1px_2px_rgba(15,23,21,0.08)] ring-1 ring-[var(--color-border)]"
+                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
               }`}
             >
               {opt.label}
@@ -96,9 +100,9 @@ export default function CandidateSettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-[9px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <h2 className="text-base font-semibold text-[var(--color-text)]">Notifications</h2>
-        <div className="mt-3 space-y-2.5 text-sm text-[var(--color-text)]">
+      <section className="surface-solid rounded-[16px] p-6">
+        <h2 className="text-sm font-semibold text-[var(--color-text)]">Notifications</h2>
+        <div className="mt-3.5 space-y-2.5 text-sm text-[var(--color-text)]">
           <label className="flex items-center gap-2.5">
             <input type="checkbox" checked={notifyStatus} onChange={(e) => setNotifyStatus(e.target.checked)} />
             In-app updates when my application stage changes
@@ -115,11 +119,11 @@ export default function CandidateSettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-[9px] border border-[var(--color-error)] bg-[var(--color-surface)] p-6">
-        <h2 className="text-base font-semibold text-[var(--color-error)]">Delete personal data</h2>
-        <p className="mt-1.5 text-sm text-[var(--color-text-secondary)]">
-          Permanently remove your candidate account, profile details, uploaded resumes, and
-          application records. Disabled inside public demo sessions.
+      <section className="surface-solid rounded-[16px] border-[var(--color-error)]/40 p-6">
+        <h2 className="text-sm font-semibold text-[var(--color-error)]">Delete personal data</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-[var(--color-text-secondary)]">
+          Permanently remove your candidate account, profile details, uploaded resumes, and application records.
+          Disabled inside public demo sessions.
         </p>
         <div className="mt-4">
           <Button
@@ -137,7 +141,7 @@ export default function CandidateSettingsPage() {
         open={confirmDeleteOpen}
         onClose={() => setConfirmDeleteOpen(false)}
         title="Confirm permanent account deletion"
-        description="This action permanently deletes your candidate account, resumes, and application records."
+        description="This permanently deletes your candidate account, resumes, and application records."
       >
         <div className="flex justify-end gap-2 pt-2">
           <Button variant="secondary" autoFocus onClick={() => setConfirmDeleteOpen(false)}>

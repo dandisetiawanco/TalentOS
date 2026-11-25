@@ -48,31 +48,30 @@ export default function WorkspaceJobsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-[-0.025em] text-[var(--color-text)]">
+          <h1 className="text-xl font-semibold tracking-[-0.02em] text-[var(--color-text)]">
             Job openings
           </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
-            Manage requisitions, update publication status, and review applicant volume. Published
-            roles sync automatically to the public careers site.
+          <p className="mt-0.5 text-sm text-[var(--color-text-secondary)]">
+            Manage open roles, publication states, and applicant volume. Published roles appear on the careers board.
           </p>
         </div>
         {canManage && (
-          <Link href="/workspace/jobs/new">
-            <Button variant="primary">
+          <Link href="/workspace/jobs/new" className="shrink-0">
+            <Button variant="primary" size="sm">
               <Plus className="h-4 w-4" aria-hidden="true" />
-              Create job opening
+              New opening
             </Button>
           </Link>
         )}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+      <div className="surface-solid grid gap-3 rounded-[14px] p-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
         <div className="relative">
           <label htmlFor="jobs-search" className="sr-only">Search jobs</label>
           <Search
-            className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-[var(--color-text-secondary)]"
+            className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--color-text-secondary)]"
             aria-hidden="true"
           />
           <Input
@@ -83,7 +82,7 @@ export default function WorkspaceJobsPage() {
               setQ(e.target.value);
               setPage(1);
             }}
-            placeholder="Search by title, department, or location"
+            placeholder="Search by title, department, or city"
             className="pl-9"
           />
         </div>
@@ -124,7 +123,7 @@ export default function WorkspaceJobsPage() {
         </Select>
       </div>
 
-      {isLoading && <LoadingRegion label="Loading organization job openings..." rows={5} />}
+      {isLoading && <LoadingRegion label="Loading job openings..." rows={5} />}
 
       {isError && (
         <StatePanel
@@ -158,7 +157,7 @@ export default function WorkspaceJobsPage() {
               </Button>
             ) : canManage ? (
               <Link href="/workspace/jobs/new">
-                <Button variant="primary" size="sm">Create job opening</Button>
+                <Button variant="primary" size="sm">Create opening</Button>
               </Link>
             ) : undefined
           }
@@ -176,20 +175,20 @@ export default function WorkspaceJobsPage() {
                 <tr>
                   <th scope="col">Job title</th>
                   <th scope="col">Department</th>
-                  <th scope="col">Arrangement</th>
+                  <th scope="col">Workplace</th>
                   <th scope="col">Status</th>
-                  <th scope="col">Applications</th>
-                  <th scope="col">Closing date</th>
+                  <th scope="col">Applicants</th>
+                  <th scope="col">Closes</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {data.items.map((job) => (
-                  <tr key={job.id} className="hover:bg-[var(--color-canvas)]">
+                  <tr key={job.id}>
                     <td data-primary="true" data-label="Job title">
                       <Link
                         href={`/workspace/jobs/${job.id}`}
-                        className="font-medium text-[var(--color-text)] hover:text-[var(--color-accent)]"
+                        className="font-medium text-[var(--color-text)] transition-colors hover:text-[var(--color-accent)]"
                       >
                         {job.title}
                       </Link>
@@ -200,7 +199,7 @@ export default function WorkspaceJobsPage() {
                     <td data-label="Department" className="text-[var(--color-text-secondary)]">
                       {job.department}
                     </td>
-                    <td data-label="Arrangement" className="text-[var(--color-text-secondary)]">
+                    <td data-label="Workplace" className="text-[var(--color-text-secondary)]">
                       {WORK_ARRANGEMENT_LABELS[job.work_arrangement] || job.work_arrangement}
                     </td>
                     <td data-label="Status">
@@ -215,7 +214,7 @@ export default function WorkspaceJobsPage() {
                               nextStatus: e.target.value as JobRecord["status"],
                             })
                           }
-                          className="min-h-9 rounded-[6px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2.5 text-xs font-medium text-[var(--color-text)]"
+                          className="min-h-8 rounded-[8px] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2.5 text-xs font-medium text-[var(--color-text)]"
                         >
                           <option value="draft">Draft</option>
                           <option value="published">Published</option>
@@ -226,25 +225,25 @@ export default function WorkspaceJobsPage() {
                         <StatusTag tone={jobStatusTone(job.status)}>{job.status}</StatusTag>
                       )}
                     </td>
-                    <td data-label="Applications" className="font-mono text-xs tabular-nums text-[var(--color-text)]">
+                    <td data-label="Applicants" className="text-xs font-medium tabular-nums text-[var(--color-text)]">
                       {job.application_count}
                     </td>
-                    <td data-label="Closing date" className="font-mono text-xs tabular-nums text-[var(--color-text-secondary)]">
+                    <td data-label="Closes" className="whitespace-nowrap text-xs tabular-nums text-[var(--color-text-secondary)]">
                       {formatShortDate(job.application_deadline)}
                     </td>
                     <td data-label="Actions">
                       <div className="flex items-center justify-end gap-2 sm:justify-start">
                         <Link
                           href={`/workspace/jobs/${job.id}`}
-                          className="inline-flex min-h-9 items-center rounded-[6px] border border-[var(--color-border)] px-2.5 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-surface-muted)]"
+                          className="inline-flex min-h-8 items-center rounded-[8px] border border-[var(--color-border)] px-2.5 text-xs font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-subtle)]"
                         >
-                          Manage
+                          Open
                         </Link>
                         {job.status === "published" && (
                           <Link
                             href={`/careers/${job.slug}`}
                             aria-label={`Open public careers listing for ${job.title}`}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-[6px] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-[var(--color-border)] text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)]"
                           >
                             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                           </Link>
@@ -258,8 +257,8 @@ export default function WorkspaceJobsPage() {
           </div>
 
           <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)]">
-            <span className="font-mono">
-              Page {data.page} of {data.total_pages} ({data.total} jobs)
+            <span className="tabular-nums">
+              Page {data.page} of {data.total_pages} · {data.total} jobs
             </span>
             <div className="flex gap-2">
               <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>

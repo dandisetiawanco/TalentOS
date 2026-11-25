@@ -1,52 +1,88 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), "Geist", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: var(--font-geist-sans), "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
   color-scheme: light dark;
 
-  --raw-canvas-light: #f7f8fa;
-  --raw-canvas-dark: #101412;
+  /* Neutral Apple-inspired palette with restrained emerald accent */
+  --raw-canvas-light: #f2f4f6;
+  --raw-canvas-dark: #111416;
   --raw-surface-light: #ffffff;
-  --raw-surface-dark: #171d19;
-  --raw-surface-muted-light: #f0f2f5;
-  --raw-surface-muted-dark: #202722;
-  --raw-text-light: #17211d;
-  --raw-text-dark: #f0f4f1;
-  --raw-text-secondary-light: #647067;
-  --raw-text-secondary-dark: #a0ada4;
-  --raw-border-light: #e2e7e3;
-  --raw-border-dark: #2d3830;
-  --raw-border-strong-light: #c8d1cb;
-  --raw-border-strong-dark: #3c4a40;
-  --raw-accent-light: #176b4d;
-  --raw-accent-dark: #65c49a;
-  --raw-accent-hover-light: #10553c;
-  --raw-accent-hover-dark: #7cd0aa;
+  --raw-surface-dark: #1b2023;
+  --raw-surface-muted-light: #eaedf0;
+  --raw-surface-muted-dark: #232a2e;
+  --raw-surface-subtle-light: #f7f9fa;
+  --raw-surface-subtle-dark: #161a1d;
+
+  --raw-text-light: #18201e;
+  --raw-text-dark: #f2f5f4;
+  --raw-text-secondary-light: #626d68;
+  --raw-text-secondary-dark: #a5afab;
+
+  --raw-border-light: rgba(24, 32, 30, 0.08);
+  --raw-border-dark: rgba(242, 245, 244, 0.09);
+  --raw-border-strong-light: rgba(24, 32, 30, 0.15);
+  --raw-border-strong-dark: rgba(242, 245, 244, 0.16);
+
+  --raw-accent-light: #247a60;
+  --raw-accent-dark: #70c9a6;
+  --raw-accent-hover-light: #1d6650;
+  --raw-accent-hover-dark: #86d9b9;
   --raw-accent-ink-light: #ffffff;
-  --raw-accent-ink-dark: #101412;
-  --raw-accent-soft-light: #e7f2ec;
-  --raw-accent-soft-dark: #1b2e25;
-  --raw-accent-text-light: #176b4d;
-  --raw-accent-text-dark: #84d7b1;
+  --raw-accent-ink-dark: #111416;
+  --raw-accent-soft-light: #e7f4ee;
+  --raw-accent-soft-dark: #182e26;
+  --raw-accent-text-light: #1d6650;
+  --raw-accent-text-dark: #86d9b9;
+
+  /* Semantic states */
   --raw-error-light: #b42318;
   --raw-error-dark: #f97066;
   --raw-error-soft-light: #fef3f2;
   --raw-error-soft-dark: #2c1615;
-  --raw-warning-light: #b54708;
+  --raw-warning-light: #9a3c07;
   --raw-warning-dark: #fdb022;
-  --raw-warning-soft-light: #fffaeb;
+  --raw-warning-soft-light: #fef7ec;
   --raw-warning-soft-dark: #2a2112;
-  --raw-success-light: #16794d;
-  --raw-success-dark: #65c49a;
+  --raw-success-light: #247a60;
+  --raw-success-dark: #70c9a6;
+  --raw-info-light: #2d5d8c;
+  --raw-info-dark: #84b6e8;
+  --raw-info-soft-light: #eef4fa;
+  --raw-info-soft-dark: #162432;
+
+  /* Liquid Glass material tokens */
+  --raw-canvas-glow-light: rgba(255, 255, 255, 0.85);
+  --raw-canvas-glow-dark: rgba(112, 201, 166, 0.045);
+
+  --raw-glass-nav-light: rgba(255, 255, 255, 0.72);
+  --raw-glass-nav-dark: rgba(27, 32, 35, 0.74);
+  --raw-glass-nav-solid-light: #f9fafb;
+  --raw-glass-nav-solid-dark: #191e21;
+
+  --raw-glass-overlay-light: rgba(255, 255, 255, 0.86);
+  --raw-glass-overlay-dark: rgba(29, 35, 39, 0.88);
+  --raw-glass-overlay-solid-light: #ffffff;
+  --raw-glass-overlay-solid-dark: #1e2428;
+
+  --raw-glass-edge-light: rgba(24, 32, 30, 0.09);
+  --raw-glass-edge-dark: rgba(255, 255, 255, 0.11);
+  --raw-glass-highlight-light: rgba(255, 255, 255, 0.92);
+  --raw-glass-highlight-dark: rgba(255, 255, 255, 0.08);
+  --raw-glass-active-light: rgba(24, 32, 30, 0.055);
+  --raw-glass-active-dark: rgba(255, 255, 255, 0.08);
+  --raw-backdrop-scrim-light: rgba(17, 20, 22, 0.28);
+  --raw-backdrop-scrim-dark: rgba(5, 7, 8, 0.56);
 
   /* Fallback assignments for browsers without light-dark() support */
   --color-canvas: var(--raw-canvas-light);
   --color-surface: var(--raw-surface-light);
   --color-surface-muted: var(--raw-surface-muted-light);
+  --color-surface-subtle: var(--raw-surface-subtle-light);
   --color-text: var(--raw-text-light);
   --color-text-secondary: var(--raw-text-secondary-light);
   --color-border: var(--raw-border-light);
@@ -61,13 +97,25 @@
   --color-warning: var(--raw-warning-light);
   --color-warning-soft: var(--raw-warning-soft-light);
   --color-success: var(--raw-success-light);
-  --color-scrollbar-track: var(--raw-surface-muted-light);
-  --color-scrollbar-thumb: #95a199;
+  --color-info: var(--raw-info-light);
+  --color-info-soft: var(--raw-info-soft-light);
+  --color-canvas-glow: var(--raw-canvas-glow-light);
+  --color-glass-nav: var(--raw-glass-nav-light);
+  --color-glass-nav-solid: var(--raw-glass-nav-solid-light);
+  --color-glass-overlay: var(--raw-glass-overlay-light);
+  --color-glass-overlay-solid: var(--raw-glass-overlay-solid-light);
+  --color-glass-edge: var(--raw-glass-edge-light);
+  --color-glass-highlight: var(--raw-glass-highlight-light);
+  --color-glass-active: var(--raw-glass-active-light);
+  --color-backdrop-scrim: var(--raw-backdrop-scrim-light);
+  --color-scrollbar-track: transparent;
+  --color-scrollbar-thumb: rgba(24, 32, 30, 0.22);
 
   @media (prefers-color-scheme: dark) {
     --color-canvas: var(--raw-canvas-dark);
     --color-surface: var(--raw-surface-dark);
     --color-surface-muted: var(--raw-surface-muted-dark);
+    --color-surface-subtle: var(--raw-surface-subtle-dark);
     --color-text: var(--raw-text-dark);
     --color-text-secondary: var(--raw-text-secondary-dark);
     --color-border: var(--raw-border-dark);
@@ -82,8 +130,18 @@
     --color-warning: var(--raw-warning-dark);
     --color-warning-soft: var(--raw-warning-soft-dark);
     --color-success: var(--raw-success-dark);
-    --color-scrollbar-track: var(--raw-surface-muted-dark);
-    --color-scrollbar-thumb: #536358;
+    --color-info: var(--raw-info-dark);
+    --color-info-soft: var(--raw-info-soft-dark);
+    --color-canvas-glow: var(--raw-canvas-glow-dark);
+    --color-glass-nav: var(--raw-glass-nav-dark);
+    --color-glass-nav-solid: var(--raw-glass-nav-solid-dark);
+    --color-glass-overlay: var(--raw-glass-overlay-dark);
+    --color-glass-overlay-solid: var(--raw-glass-overlay-solid-dark);
+    --color-glass-edge: var(--raw-glass-edge-dark);
+    --color-glass-highlight: var(--raw-glass-highlight-dark);
+    --color-glass-active: var(--raw-glass-active-dark);
+    --color-backdrop-scrim: var(--raw-backdrop-scrim-dark);
+    --color-scrollbar-thumb: rgba(242, 245, 244, 0.2);
   }
 
   /* Map <meta name="color-scheme"> override back to CSS color-scheme */
@@ -98,6 +156,7 @@
     --color-canvas: light-dark(var(--raw-canvas-light), var(--raw-canvas-dark));
     --color-surface: light-dark(var(--raw-surface-light), var(--raw-surface-dark));
     --color-surface-muted: light-dark(var(--raw-surface-muted-light), var(--raw-surface-muted-dark));
+    --color-surface-subtle: light-dark(var(--raw-surface-subtle-light), var(--raw-surface-subtle-dark));
     --color-text: light-dark(var(--raw-text-light), var(--raw-text-dark));
     --color-text-secondary: light-dark(var(--raw-text-secondary-light), var(--raw-text-secondary-dark));
     --color-border: light-dark(var(--raw-border-light), var(--raw-border-dark));
@@ -112,8 +171,18 @@
     --color-warning: light-dark(var(--raw-warning-light), var(--raw-warning-dark));
     --color-warning-soft: light-dark(var(--raw-warning-soft-light), var(--raw-warning-soft-dark));
     --color-success: light-dark(var(--raw-success-light), var(--raw-success-dark));
-    --color-scrollbar-track: light-dark(var(--raw-surface-muted-light), var(--raw-surface-muted-dark));
-    --color-scrollbar-thumb: light-dark(#95a199, #536358);
+    --color-info: light-dark(var(--raw-info-light), var(--raw-info-dark));
+    --color-info-soft: light-dark(var(--raw-info-soft-light), var(--raw-info-soft-dark));
+    --color-canvas-glow: light-dark(var(--raw-canvas-glow-light), var(--raw-canvas-glow-dark));
+    --color-glass-nav: light-dark(var(--raw-glass-nav-light), var(--raw-glass-nav-dark));
+    --color-glass-nav-solid: light-dark(var(--raw-glass-nav-solid-light), var(--raw-glass-nav-solid-dark));
+    --color-glass-overlay: light-dark(var(--raw-glass-overlay-light), var(--raw-glass-overlay-dark));
+    --color-glass-overlay-solid: light-dark(var(--raw-glass-overlay-solid-light), var(--raw-glass-overlay-solid-dark));
+    --color-glass-edge: light-dark(var(--raw-glass-edge-light), var(--raw-glass-edge-dark));
+    --color-glass-highlight: light-dark(var(--raw-glass-highlight-light), var(--raw-glass-highlight-dark));
+    --color-glass-active: light-dark(var(--raw-glass-active-light), var(--raw-glass-active-dark));
+    --color-backdrop-scrim: light-dark(var(--raw-backdrop-scrim-light), var(--raw-backdrop-scrim-dark));
+    --color-scrollbar-thumb: light-dark(rgba(24, 32, 30, 0.22), rgba(242, 245, 244, 0.2));
   }
 
   accent-color: var(--color-accent);
@@ -131,7 +200,7 @@
     overflow-x: clip;
   }
 
-  /* Interactive pointer cursor affordance (WCAG / R-39) */
+  /* Interactive pointer cursor affordance */
   a[href],
   button,
   summary,
@@ -165,38 +234,111 @@
   }
 }
 
+/* ==========================================================================
+   Liquid Glass Four-Level Material System
+   1. Canvas         (.surface-canvas)
+   2. Glass Nav      (.surface-glass-nav)
+   3. Glass Overlay  (.surface-glass-overlay)
+   4. Solid Content  (.surface-solid)
+   ========================================================================== */
+
+.surface-canvas {
+  background-color: var(--color-canvas);
+  background-image: radial-gradient(
+    ellipse 88% 42% at 50% -10%,
+    var(--color-canvas-glow),
+    transparent 72%
+  );
+  background-repeat: no-repeat;
+}
+
+.surface-glass-nav {
+  background-color: var(--color-glass-nav-solid);
+  border: 1px solid var(--color-glass-edge);
+  box-shadow:
+    inset 0 1px 0 0 var(--color-glass-highlight),
+    0 1px 2px rgba(15, 23, 21, 0.04),
+    0 10px 28px -14px rgba(15, 23, 21, 0.14);
+}
+
+.surface-glass-overlay {
+  background-color: var(--color-glass-overlay-solid);
+  border: 1px solid var(--color-glass-edge);
+  box-shadow:
+    inset 0 1px 0 0 var(--color-glass-highlight),
+    0 4px 14px -2px rgba(10, 14, 13, 0.08),
+    0 24px 52px -18px rgba(10, 14, 13, 0.28);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .surface-glass-nav {
+    background-color: var(--color-glass-nav);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  .surface-glass-overlay {
+    background-color: var(--color-glass-overlay);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
+  }
+}
+
+.surface-solid {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 2px rgba(15, 23, 21, 0.03);
+}
+
+/* Subtle OS segmented control track */
+.surface-segment-track {
+  background-color: var(--color-glass-active);
+  border: 1px solid var(--color-border);
+}
+
 /* Skip link for keyboard users */
 .skip-link {
   position: absolute;
   left: 12px;
   top: -64px;
   z-index: 100;
-  border-radius: 6px;
+  border-radius: 10px;
   background: var(--color-accent);
   color: var(--color-accent-ink);
   padding: 10px 16px;
   font-size: 0.875rem;
   font-weight: 500;
   text-decoration: none;
-  transition: top 120ms ease;
+  transition: top 140ms ease;
 }
 .skip-link:focus {
   top: 12px;
 }
 
-/* Native <dialog> modal scroll containment & backdrop styling */
+/* Native <dialog> modal scroll containment, Liquid Glass overlay, & scale/opacity transition */
 dialog.talentos-dialog:not([open]) {
   display: none;
 }
 dialog.talentos-dialog[open] {
   display: flex;
   flex-direction: column;
+  animation: dialog-enter 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 dialog:modal {
   overscroll-behavior: contain;
 }
 dialog::backdrop {
-  background: color-mix(in srgb, #101412 58%, transparent);
+  background: var(--color-backdrop-scrim);
   overflow: hidden;
   overscroll-behavior: contain;
 }
@@ -216,16 +358,26 @@ dialog.talentos-drawer[open] {
   padding: 0;
   background: transparent;
   border: 0;
+  animation: drawer-fade 160ms ease-out;
+}
+@keyframes drawer-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Responsive container-queried data table */
+/* Responsive container-queried data table (Solid Content material) */
 .talentos-table-wrapper {
   overflow-x: auto;
   max-inline-size: 100%;
   container-type: inline-size;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 14px;
   background: var(--color-surface);
+  box-shadow: 0 1px 2px rgba(15, 23, 21, 0.03);
 }
 .talentos-table {
   width: 100%;
@@ -237,26 +389,33 @@ dialog.talentos-drawer[open] {
   position: sticky;
   inset-block-start: 0;
   z-index: 1;
-  background: var(--color-surface-muted);
+  background: var(--color-surface-subtle);
 }
 .talentos-table th {
   text-align: left;
   font-weight: 500;
   font-size: 0.75rem;
   color: var(--color-text-secondary);
-  padding: 10px 14px;
+  padding: 11px 16px;
   border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
 }
 .talentos-table td {
-  padding: 12px 14px;
+  padding: 13px 16px;
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
+}
+.talentos-table tbody tr {
+  transition: background-color 120ms ease;
+}
+.talentos-table tbody tr:hover {
+  background: var(--color-surface-subtle);
 }
 .talentos-table tbody tr:last-child td {
   border-bottom: 0;
 }
 
-@container (width < 640px) {
+@container (width < 480px) {
   .talentos-table,
   .talentos-table tbody,
   .talentos-table tr,
@@ -269,7 +428,7 @@ dialog.talentos-drawer[open] {
   }
   .talentos-table tbody tr {
     border-bottom: 1px solid var(--color-border);
-    padding: 12px 14px;
+    padding: 14px 16px;
   }
   .talentos-table tbody tr:last-child {
     border-bottom: 0;
