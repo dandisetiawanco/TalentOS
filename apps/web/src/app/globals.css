@@ -1,0 +1,318 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), "Geist", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  color-scheme: light dark;
+
+  --raw-canvas-light: #f7f8fa;
+  --raw-canvas-dark: #101412;
+  --raw-surface-light: #ffffff;
+  --raw-surface-dark: #171d19;
+  --raw-surface-muted-light: #f0f2f5;
+  --raw-surface-muted-dark: #202722;
+  --raw-text-light: #17211d;
+  --raw-text-dark: #f0f4f1;
+  --raw-text-secondary-light: #647067;
+  --raw-text-secondary-dark: #a0ada4;
+  --raw-border-light: #e2e7e3;
+  --raw-border-dark: #2d3830;
+  --raw-border-strong-light: #c8d1cb;
+  --raw-border-strong-dark: #3c4a40;
+  --raw-accent-light: #176b4d;
+  --raw-accent-dark: #65c49a;
+  --raw-accent-hover-light: #10553c;
+  --raw-accent-hover-dark: #7cd0aa;
+  --raw-accent-ink-light: #ffffff;
+  --raw-accent-ink-dark: #101412;
+  --raw-accent-soft-light: #e7f2ec;
+  --raw-accent-soft-dark: #1b2e25;
+  --raw-accent-text-light: #176b4d;
+  --raw-accent-text-dark: #84d7b1;
+  --raw-error-light: #b42318;
+  --raw-error-dark: #f97066;
+  --raw-error-soft-light: #fef3f2;
+  --raw-error-soft-dark: #2c1615;
+  --raw-warning-light: #b54708;
+  --raw-warning-dark: #fdb022;
+  --raw-warning-soft-light: #fffaeb;
+  --raw-warning-soft-dark: #2a2112;
+  --raw-success-light: #16794d;
+  --raw-success-dark: #65c49a;
+
+  /* Fallback assignments for browsers without light-dark() support */
+  --color-canvas: var(--raw-canvas-light);
+  --color-surface: var(--raw-surface-light);
+  --color-surface-muted: var(--raw-surface-muted-light);
+  --color-text: var(--raw-text-light);
+  --color-text-secondary: var(--raw-text-secondary-light);
+  --color-border: var(--raw-border-light);
+  --color-border-strong: var(--raw-border-strong-light);
+  --color-accent: var(--raw-accent-light);
+  --color-accent-hover: var(--raw-accent-hover-light);
+  --color-accent-ink: var(--raw-accent-ink-light);
+  --color-accent-soft: var(--raw-accent-soft-light);
+  --color-accent-text: var(--raw-accent-text-light);
+  --color-error: var(--raw-error-light);
+  --color-error-soft: var(--raw-error-soft-light);
+  --color-warning: var(--raw-warning-light);
+  --color-warning-soft: var(--raw-warning-soft-light);
+  --color-success: var(--raw-success-light);
+  --color-scrollbar-track: var(--raw-surface-muted-light);
+  --color-scrollbar-thumb: #95a199;
+
+  @media (prefers-color-scheme: dark) {
+    --color-canvas: var(--raw-canvas-dark);
+    --color-surface: var(--raw-surface-dark);
+    --color-surface-muted: var(--raw-surface-muted-dark);
+    --color-text: var(--raw-text-dark);
+    --color-text-secondary: var(--raw-text-secondary-dark);
+    --color-border: var(--raw-border-dark);
+    --color-border-strong: var(--raw-border-strong-dark);
+    --color-accent: var(--raw-accent-dark);
+    --color-accent-hover: var(--raw-accent-hover-dark);
+    --color-accent-ink: var(--raw-accent-ink-dark);
+    --color-accent-soft: var(--raw-accent-soft-dark);
+    --color-accent-text: var(--raw-accent-text-dark);
+    --color-error: var(--raw-error-dark);
+    --color-error-soft: var(--raw-error-soft-dark);
+    --color-warning: var(--raw-warning-dark);
+    --color-warning-soft: var(--raw-warning-soft-dark);
+    --color-success: var(--raw-success-dark);
+    --color-scrollbar-track: var(--raw-surface-muted-dark);
+    --color-scrollbar-thumb: #536358;
+  }
+
+  /* Map <meta name="color-scheme"> override back to CSS color-scheme */
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    color-scheme: dark;
+  }
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    color-scheme: light;
+  }
+
+  @supports (color: light-dark(white, black)) {
+    --color-canvas: light-dark(var(--raw-canvas-light), var(--raw-canvas-dark));
+    --color-surface: light-dark(var(--raw-surface-light), var(--raw-surface-dark));
+    --color-surface-muted: light-dark(var(--raw-surface-muted-light), var(--raw-surface-muted-dark));
+    --color-text: light-dark(var(--raw-text-light), var(--raw-text-dark));
+    --color-text-secondary: light-dark(var(--raw-text-secondary-light), var(--raw-text-secondary-dark));
+    --color-border: light-dark(var(--raw-border-light), var(--raw-border-dark));
+    --color-border-strong: light-dark(var(--raw-border-strong-light), var(--raw-border-strong-dark));
+    --color-accent: light-dark(var(--raw-accent-light), var(--raw-accent-dark));
+    --color-accent-hover: light-dark(var(--raw-accent-hover-light), var(--raw-accent-hover-dark));
+    --color-accent-ink: light-dark(var(--raw-accent-ink-light), var(--raw-accent-ink-dark));
+    --color-accent-soft: light-dark(var(--raw-accent-soft-light), var(--raw-accent-soft-dark));
+    --color-accent-text: light-dark(var(--raw-accent-text-light), var(--raw-accent-text-dark));
+    --color-error: light-dark(var(--raw-error-light), var(--raw-error-dark));
+    --color-error-soft: light-dark(var(--raw-error-soft-light), var(--raw-error-soft-dark));
+    --color-warning: light-dark(var(--raw-warning-light), var(--raw-warning-dark));
+    --color-warning-soft: light-dark(var(--raw-warning-soft-light), var(--raw-warning-soft-dark));
+    --color-success: light-dark(var(--raw-success-light), var(--raw-success-dark));
+    --color-scrollbar-track: light-dark(var(--raw-surface-muted-light), var(--raw-surface-muted-dark));
+    --color-scrollbar-thumb: light-dark(#95a199, #536358);
+  }
+
+  accent-color: var(--color-accent);
+  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  /* Interactive pointer cursor affordance (WCAG / R-39) */
+  a[href],
+  button,
+  summary,
+  select,
+  label[for],
+  label:has(> input[type="checkbox"], > input[type="radio"]),
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  [role="switch"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
+    cursor: pointer;
+  }
+
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  /* Visible accessible focus indicator on every interactive element */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Skip link for keyboard users */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -64px;
+  z-index: 100;
+  border-radius: 6px;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 120ms ease;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Native <dialog> modal scroll containment & backdrop styling */
+dialog.talentos-dialog:not([open]) {
+  display: none;
+}
+dialog.talentos-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+dialog:modal {
+  overscroll-behavior: contain;
+}
+dialog::backdrop {
+  background: color-mix(in srgb, #101412 58%, transparent);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Native <dialog> mobile navigation drawer */
+dialog.talentos-drawer:not([open]) {
+  display: none;
+}
+dialog.talentos-drawer[open] {
+  display: block;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+/* Responsive container-queried data table */
+.talentos-table-wrapper {
+  overflow-x: auto;
+  max-inline-size: 100%;
+  container-type: inline-size;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+.talentos-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+}
+.talentos-table thead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  background: var(--color-surface-muted);
+}
+.talentos-table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+.talentos-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+.talentos-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+@container (width < 640px) {
+  .talentos-table,
+  .talentos-table tbody,
+  .talentos-table tr,
+  .talentos-table td {
+    display: block;
+    width: 100%;
+  }
+  .talentos-table thead {
+    display: none;
+  }
+  .talentos-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    padding: 12px 14px;
+  }
+  .talentos-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .talentos-table td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 0;
+    padding: 5px 0;
+    text-align: right;
+  }
+  .talentos-table td::before {
+    content: attr(data-label);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-align: left;
+    flex-shrink: 0;
+  }
+  .talentos-table td[data-primary="true"] {
+    display: block;
+    text-align: left;
+    padding-bottom: 8px;
+  }
+  .talentos-table td[data-primary="true"]::before {
+    display: none;
+  }
+}
+
+/* Tabular numeric alignment for metrics and timestamps */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

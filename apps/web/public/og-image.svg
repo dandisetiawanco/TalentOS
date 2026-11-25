@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" fill="none">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="48" y="48" width="1104" height="534" rx="12" fill="#FFFFFF" stroke="#E2E7E3" stroke-width="2"/>
+  <line x1="48" y1="136" x2="1152" y2="136" stroke="#E2E7E3" stroke-width="1.5"/>
+  <g transform="translate(88, 76)">
+    <rect x="0" y="2" width="28" height="6" rx="1.5" fill="#17211D"/>
+    <rect x="7" y="12" width="12" height="6" rx="1.5" fill="#17211D"/>
+    <rect x="11" y="18" width="6" height="10" rx="1.5" fill="#17211D"/>
+    <rect x="22" y="12" width="6" height="6" rx="1.5" fill="#176B4D"/>
+    <text x="42" y="23" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="24" font-weight="600" letter-spacing="-0.03em">Talent<tspan fill="#176B4D">OS</tspan></text>
+  </g>
+  <text x="1112" y="100" text-anchor="end" fill="#647067" font-family="Geist Mono, monospace" font-size="14">RECRUITMENT OPERATING SYSTEM</text>
+  <text x="88" y="256" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="60" font-weight="600" letter-spacing="-0.035em">Better hiring.</text>
+  <text x="88" y="324" fill="#176B4D" font-family="Geist, Inter, sans-serif" font-size="60" font-weight="600" letter-spacing="-0.035em">Built on intelligence.</text>
+  <text x="88" y="388" fill="#647067" font-family="Geist, Inter, sans-serif" font-size="22">Human-led hiring workflows, evidence-based resume review,</text>
+  <text x="88" y="420" fill="#647067" font-family="Geist, Inter, sans-serif" font-size="22">interview coordination, and recruitment analytics in one workspace.</text>
+  <g transform="translate(760, 186)">
+    <rect width="348" height="328" rx="8" fill="#F7F8FA" stroke="#E2E7E3" stroke-width="1.5"/>
+    <text x="20" y="32" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="14" font-weight="600">Pipeline Overview</text>
+    <text x="328" y="32" text-anchor="end" fill="#647067" font-family="Geist Mono, monospace" font-size="12">7 STAGES</text>
+    <line x1="20" y1="46" x2="328" y2="46" stroke="#E2E7E3"/>
+    <rect x="20" y="64" width="308" height="44" rx="6" fill="#FFFFFF" stroke="#E2E7E3"/>
+    <text x="34" y="84" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Staff Frontend Engineer</text>
+    <text x="34" y="100" fill="#647067" font-family="Geist Mono, monospace" font-size="11">Evidence review complete</text>
+    <rect x="256" y="75" width="58" height="22" rx="4" fill="#E7F2EC"/>
+    <text x="285" y="90" text-anchor="middle" fill="#176B4D" font-family="Geist Mono, monospace" font-size="11" font-weight="600">INTERVIEW</text>
+    <rect x="20" y="120" width="308" height="44" rx="6" fill="#FFFFFF" stroke="#E2E7E3"/>
+    <text x="34" y="140" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Senior Backend Engineer</text>
+    <text x="34" y="156" fill="#647067" font-family="Geist Mono, monospace" font-size="11">4/5 criteria verified</text>
+    <rect x="256" y="131" width="58" height="22" rx="4" fill="#F0F2F5"/>
+    <text x="285" y="146" text-anchor="middle" fill="#17211D" font-family="Geist Mono, monospace" font-size="11" font-weight="600">SHORTLIST</text>
+    <rect x="20" y="176" width="308" height="44" rx="6" fill="#FFFFFF" stroke="#E2E7E3"/>
+    <text x="34" y="196" fill="#17211D" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Product Designer</text>
+    <text x="34" y="212" fill="#647067" font-family="Geist Mono, monospace" font-size="11">Panel interview scheduled</text>
+    <rect x="256" y="187" width="58" height="22" rx="4" fill="#E7F2EC"/>
+    <text x="285" y="202" text-anchor="middle" fill="#176B4D" font-family="Geist Mono, monospace" font-size="11" font-weight="600">OFFER</text>
+    <rect x="20" y="242" width="308" height="64" rx="6" fill="#17211D"/>
+    <text x="34" y="268" fill="#F0F4F1" font-family="Geist, Inter, sans-serif" font-size="13" font-weight="500">Human-led decision boundary</text>
+    <text x="34" y="289" fill="#A0ADA4" font-family="Geist, Inter, sans-serif" font-size="11.5">AI surfaces evidence. People make every hiring call.</text>
+  </g>
+  <line x1="88" y1="518" x2="1112" y2="518" stroke="#E2E7E3"/>
+  <text x="88" y="554" fill="#647067" font-family="Geist, Inter, sans-serif" font-size="15">Designed and developed by Dandi Setiawan</text>
+  <text x="1112" y="554" text-anchor="end" fill="#176B4D" font-family="Geist Mono, monospace" font-size="15">dandisetiawan.id</text>
+</svg>

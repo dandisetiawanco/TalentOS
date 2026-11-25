@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 184 36" width="184" height="36" fill="none" role="img" aria-label="TalentOS">
+  <g transform="translate(2, 2)">
+    <rect x="3" y="5" width="24" height="5" rx="1.25" fill="#17211D"/>
+    <rect x="9" y="13.5" width="10" height="5" rx="1.25" fill="#17211D"/>
+    <rect x="12.5" y="18.5" width="5" height="8.5" rx="1.25" fill="#17211D"/>
+    <rect x="22" y="13.5" width="5" height="5" rx="1.25" fill="#176B4D"/>
+  </g>
+  <text x="42" y="25" fill="#17211D" font-family="Geist, Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="21" font-weight="600" letter-spacing="-0.03em">Talent<tspan fill="#176B4D">OS</tspan></text>
+</svg>
