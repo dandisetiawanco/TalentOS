@@ -206,9 +206,13 @@ class DeterministicRuleProvider(ResumeAnalysisProvider):
 
         summary_lines = _extract_section_lines(resume_text, ("SUMMARY", "PROFESSIONAL SUMMARY", "PROFILE"))
         if summary_lines:
-            summary = " ".join(summary_lines[:2])[:500]
+            summary = " ".join(summary_lines[:4])[:500].rstrip(" ,;:")
+            if summary and summary[-1] not in ".!?":
+                summary += "."
         elif sentences:
-            summary = " ".join(sentences[:2])[:500]
+            summary = " ".join(sentences[:2])[:500].rstrip(" ,;:")
+            if summary and summary[-1] not in ".!?":
+                summary += "."
         else:
             summary = "Extracted resume content did not include an explicit summary section."
 

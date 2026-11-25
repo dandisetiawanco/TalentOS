@@ -62,7 +62,7 @@ export function PublicHeader() {
             <BrandWordmark markSize={22} />
           </Link>
 
-          <nav aria-label="Primary navigation" className="hidden items-center gap-1 md:flex">
+          <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
             {NAV_LINKS.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -70,7 +70,7 @@ export function PublicHeader() {
                   key={item.href}
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`inline-flex h-9 items-center rounded-[9px] px-3 text-[13.5px] transition-colors ${
+                  className={`inline-flex h-9 items-center whitespace-nowrap rounded-[9px] px-3 text-[13.5px] transition-colors ${
                     isActive
                       ? "bg-[var(--color-surface)] font-medium text-[var(--color-text)] shadow-[0_1px_2px_rgba(15,23,21,0.05)]"
                       : "text-[var(--color-text-secondary)] hover:bg-[var(--color-glass-active)] hover:text-[var(--color-text)]"
@@ -82,7 +82,7 @@ export function PublicHeader() {
             })}
           </nav>
 
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
             <button
               type="button"
               onClick={toggleTheme}
@@ -97,19 +97,19 @@ export function PublicHeader() {
             </button>
             <Link
               href={workspaceHref}
-              className="inline-flex h-9 items-center rounded-[9px] px-3 text-[13.5px] font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-glass-active)]"
+              className="inline-flex h-9 items-center whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-medium text-[var(--color-text)] transition-colors hover:bg-[var(--color-glass-active)]"
             >
               {user ? (user.account_type === "candidate" ? "Candidate portal" : "Open workspace") : "Sign in"}
             </Link>
             <Link
               href="/demo"
-              className="inline-flex h-9 items-center rounded-[10px] bg-[var(--color-accent)] px-3.5 text-[13.5px] font-medium text-[var(--color-accent-ink)] shadow-[0_1px_2px_rgba(15,23,21,0.12)] transition-colors hover:bg-[var(--color-accent-hover)]"
+              className="inline-flex h-9 items-center whitespace-nowrap rounded-[10px] bg-[var(--color-accent)] px-3.5 text-[13.5px] font-medium text-[var(--color-accent-ink)] shadow-[0_1px_2px_rgba(15,23,21,0.12)] transition-colors hover:bg-[var(--color-accent-hover)]"
             >
               Try the demo
             </Link>
           </div>
 
-          <div className="flex items-center gap-1.5 md:hidden">
+          <div className="flex items-center gap-1.5 lg:hidden">
             <button
               type="button"
               onClick={toggleTheme}
